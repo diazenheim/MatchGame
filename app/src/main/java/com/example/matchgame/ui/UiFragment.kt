@@ -1,0 +1,60 @@
+package com.example.matchgame.ui
+
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.ImageButton
+import androidx.fragment.app.Fragment
+import com.example.matchgame.R
+import com.example.matchgame.logic.GameLogic
+import com.example.matchgame.models.MemoryCard
+
+//manages the user interface, displaying the game board and handling user interactions
+class UiFragment : Fragment() {
+
+    private lateinit var buttons: List<ImageButton>
+    private lateinit var gameLogic: GameLogic
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        // Inflate the layout for this fragment
+        return inflater.inflate(R.layout.activity_main, container, false)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        //the list of the image buttons from activity_main.xml:
+        buttons = listOf(
+            view.findViewById(R.id.imgbtn1),
+            view.findViewById(R.id.imgbtn2),
+            view.findViewById(R.id.imgbtn3),
+            view.findViewById(R.id.imgbtn4),
+            view.findViewById(R.id.imgbtn5),
+            view.findViewById(R.id.imgbtn6),
+            view.findViewById(R.id.imgbtn7),
+            view.findViewById(R.id.imgbtn8)
+        )
+
+        gameLogic = GameLogic(buttons, ::updateViews)
+
+        buttons.forEachIndexed { index, button ->
+            button.setOnClickListener {
+                gameLogic.onCardClicked(index)
+            }
+        }
+    }
+
+    private fun updateViews(cards: List<MemoryCard>) {
+        cards.forEachIndexed { index, card ->
+            val button = buttons[index]
+            if (card.isMatched) {
+                button.alpha = 0.1f
+            }
+            button.setImageResource(if (card.isFaceUp) card.identifier else R.drawable.card_down)
+        }
+    }
+}
