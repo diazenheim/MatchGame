@@ -1,6 +1,8 @@
 package com.example.matchgame.ui
 
+import android.content.ContentValues.TAG
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -43,6 +45,7 @@ class UiFragment : Fragment() {
 
         buttons.forEachIndexed { index, button ->
             button.setOnClickListener {
+                Log.i(TAG, "clicked the button")
                 gameLogic.onCardClicked(index)
             }
         }
