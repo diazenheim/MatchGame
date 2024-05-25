@@ -11,12 +11,15 @@ import androidx.fragment.app.Fragment
 import com.example.matchgame.R
 import com.example.matchgame.logic.GameLogic
 import com.example.matchgame.models.MemoryCard
+import com.example.matchgame.data.DataCollector
 
 //manages the user interface, displaying the game board and handling user interactions
 class UiFragment : Fragment() {
 
     private lateinit var buttons: List<ImageButton>
     private lateinit var gameLogic: GameLogic
+    private lateinit var dataCollector: DataCollector
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -28,6 +31,9 @@ class UiFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        //initialize DataCollector
+        dataCollector= DataCollector(requireContext())
 
         //the list of the image buttons from activity_main.xml:
         buttons = listOf(
@@ -46,6 +52,8 @@ class UiFragment : Fragment() {
         buttons.forEachIndexed { index, button ->
             button.setOnClickListener {
                 Log.i(TAG, "clicked the button")
+                //track button click event
+                dataCollector.trackButton("button${index+1}")
                 gameLogic.onCardClicked(index)
             }
         }

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "639794060699",
+    "project_id": "matchgame-42cec",
+    "storage_bucket": "matchgame-42cec.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:639794060699:android:ed0de849b39d67e07e153e",
+        "android_client_info": {
+          "package_name": "com.example.matchgame"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDjZ7fyAJywrcMrCE7w-etPTXAv_7D3Jg0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
