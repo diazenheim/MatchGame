@@ -4,15 +4,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+
+    >
     <include
-        android:id="@+id/activity_main"
-        layout="@layout/activity_main"
+        android:id="@+id/play_layout"
+        layout="@layout/play_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
     <FrameLayout
-        android:id="@+id/fragment_main_container"
+        android:id="@+id/fragment_playmode_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-
+        android:layout_height="match_parent" />/>
 </androidx.constraintlayout.widget.ConstraintLayout>
