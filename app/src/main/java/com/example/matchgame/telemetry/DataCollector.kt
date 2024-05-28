@@ -1,4 +1,4 @@
-package com.example.matchgame.data
+package com.example.matchgame.telemetry
 import android.content.Context
 import android.os.Bundle
 import com.google.firebase.analytics.FirebaseAnalytics
