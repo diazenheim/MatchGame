@@ -66,6 +66,7 @@ class UiFragment : Fragment() {
 
     override fun onSaveInstanceState(savedState: Bundle) {
         super.onSaveInstanceState(savedState)
+        gameLogic.saveState(savedState)
     }
 
     private fun updateViews(cards: List<MemoryCard>) {
