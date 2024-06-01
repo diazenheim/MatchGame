@@ -6,7 +6,8 @@
     android:layout_height="match_parent"
     android:background="@drawable/letsplay"
     android:gravity="center"
-    tools:context=".ui.UiFragment">
+    tools:context=".ui.Round1Fragment"
+    tools:ignore="ExtraText">
     >
 
     <ImageButton

@@ -7,14 +7,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.example.matchgame.R
 import com.example.matchgame.logic.GameLogic
 import com.example.matchgame.models.MemoryCard
 import com.example.matchgame.telemetry.DataCollector
 
+//Questo fragment è quello che si chiamava prima UiFragment
 //manages the user interface, displaying the game board and handling user interactions
-class UiFragment : Fragment() {
+class Round1Fragment : Fragment() {
 
     private lateinit var buttons: List<ImageButton>
     private lateinit var gameLogic: GameLogic
@@ -26,7 +28,7 @@ class UiFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.play_layout, container, false)
+        return inflater.inflate(R.layout.round1_layout, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -48,7 +50,7 @@ class UiFragment : Fragment() {
             view.findViewById(R.id.imgbtn8)
         )
 
-        gameLogic = GameLogic(buttons, ::updateViews)
+        gameLogic = GameLogic(::updateViews,::allCardsMatched, this::showToast,1)
 
         buttons.forEachIndexed { index, button ->
             button.setOnClickListener {
@@ -74,8 +76,19 @@ class UiFragment : Fragment() {
             val button = buttons[index]
             if (card.isMatched) {
                 button.alpha = 0.1f
+            } else {
+                button.alpha = 1.0f
             }
             button.setImageResource(if (card.isFaceUp) card.identifier else R.drawable.card_down) //imposta l'immagine del pulsante in base allo stato "isFaceUp" della carta
         }
+    }
+    private fun allCardsMatched() {
+        parentFragmentManager.beginTransaction()
+            .replace(R.id.fragment_main_container, Round2Fragment())
+            .addToBackStack(null)
+            .commit()
+    }
+    private fun showToast(message: String) {
+        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
     }
 }

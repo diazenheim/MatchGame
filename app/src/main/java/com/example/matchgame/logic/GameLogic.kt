@@ -1,61 +1,86 @@
 package com.example.matchgame.logic
 
 import android.os.Bundle
-import android.widget.ImageButton
 import android.widget.Toast
 import com.example.matchgame.R
 import com.example.matchgame.models.MemoryCard
 
-//contains the game logic, handling the card flipping, checking for matches, and updating the game state
 class GameLogic(
-    private val buttons: List<ImageButton>,
-    private val updateViewsCallback: (List<MemoryCard>) -> Unit // Callback per aggiornare le viste dopo le operazioni di gioco
+    private val updateViewsCallback: (List<MemoryCard>) -> Unit, //non gestiamo più la visualizzazione delle carte con una lista di image Button bensì affidiamo la presentazione a CardAdapter, in modo da separare la logica del gioco dalla logica di presentazione
+    private val onAllCardsMatchedCallback: () -> Unit, //questa callback controlla se tutte le carte sono state matchate
+    private val ToastContextCallback: (String) -> Unit ,// Questa callback permette di mostrare il Toast nel fragment che ha inizializzato l'istanza di gameLogic
+    private val round: Int //questa variabile traccia il round corrente
+
 ) {
 
     private lateinit var cards: List<MemoryCard>
-    private var indexOfSingleSelectedCard: Int? = null // Indice della carta selezionata, se ce n'è solo una
+    private var indexOfSingleSelectedCard: Int? = null
 
     init {
-        setupGame() // Inizializza il gioco
+        setupGame()
     }
 
-    private fun setupGame() {
-        val images = mutableListOf(
-            R.drawable.one,
-            R.drawable.two,
-            R.drawable.three,
-            R.drawable.four
-        )
+    private fun setupGame() { //a seconda che il round sia 1 o 2, la lista di immagini cambia
+        val images: MutableList<Int> = mutableListOf()
+        if (round == 1) {
+            images.addAll(listOf(
+                R.drawable.one,
+                R.drawable.two,
+                R.drawable.three,
+                R.drawable.four
+            ))
+        } else if (round == 2) {
+            images.addAll(listOf(
+                R.drawable.one,
+                R.drawable.two,
+                R.drawable.three,
+                R.drawable.four,
+                R.drawable.five,
+                R.drawable.six,
+                R.drawable.seven,
+                R.drawable.eight
+            ))
+        }
+        images.addAll(images)// Raddoppio delle immagini per creare coppie
+        images.shuffle() //mischio carte
+        val tempCards = mutableListOf<MemoryCard>() //creo una lista temporanea per gestire l'inserimento delle carte
+        for (index in images.indices) {
+            tempCards.add(MemoryCard(images[index]))
+        }
+        cards = tempCards
 
-        images.addAll(images) // duplica gli elementi della lista "images" all'interno di se stessa.
-        images.shuffle() // Randomize the order of image
-
-        cards = buttons.indices.map { index ->
-            MemoryCard(images[index])
-        }  /* Crea le carte in base alle immagini e assegna a ciascuna una MemoryCard,
-        stiamo mappando ogni indice della lista buttons ad un oggetto MemoryCard*/
-        updateViews() // Chiama la callback per aggiornare le viste con lo stato aggiornato del gioco
+        updateViews()
     }
 
     fun onCardClicked(position: Int) {
         val card = cards[position]
-        if (card.isFaceUp) { //se clicchiamo una carta già visibile, visualizzaiamo:"Invalid move"
-            Toast.makeText(buttons[position].context, "Invalid move!", Toast.LENGTH_SHORT).show()
+        if (card.isMatched) {
+            // Se la carta è già abbinata, non fare nulla
+            return
+        }
+        if (card.isFaceUp) {
+            // Se la carta è già scoperta, premendola viene rigirata
+            card.isFaceUp = false
+            if (indexOfSingleSelectedCard == position) { //una carta coperta non è più una carta selezionata
+                indexOfSingleSelectedCard = null
+            }
+            updateViews()
             return
         }
 
         if (indexOfSingleSelectedCard == null) {
-            restoreCards() //se non c'è nessuna carta selezionata, viene chiamoto il metodo restoreCards()
-            indexOfSingleSelectedCard = position //viene salvato l'indice della carta appena selezionata
+            restoreCards() //giriamo le carte non selezionate
+            indexOfSingleSelectedCard = position
         } else {
-            checkForMatch(indexOfSingleSelectedCard!!, position) //viene controllato se carta appena selezionata e quella già selezionata sono uguali
-            indexOfSingleSelectedCard = null //viene rimosso l'indice della carta selezionata
+            checkForMatch(indexOfSingleSelectedCard!!, position) //controlliamo se le carte sono uguali
+            indexOfSingleSelectedCard = null
         }
-        card.isFaceUp = !card.isFaceUp  // Inverte lo stato della carta (girata o non girata)
+        card.isFaceUp = !card.isFaceUp //da carta scoperta a carta coperta, e viceversa
         updateViews()
+        checkAllMatched()
     }
-    fun saveState(savedState: Bundle) {
-        // Salva lo stato del gioco nel bundle
+
+    fun saveState(savedState: Bundle) { //salviamo lo stato in un Bundle
         savedState.putIntArray("cardIdentifiers", cards.map { it.identifier }.toIntArray())
         savedState.putBooleanArray("isFaceUp", cards.map { it.isFaceUp }.toBooleanArray())
         savedState.putBooleanArray("isMatched", cards.map { it.isMatched }.toBooleanArray())
@@ -63,13 +88,12 @@ class GameLogic(
     }
 
     fun restoreState(savedInstanceState: Bundle) {
-        // Ripristina lo stato del gioco dal bundle
         val identifiers = savedInstanceState.getIntArray("cardIdentifiers")
         val isFaceUp = savedInstanceState.getBooleanArray("isFaceUp")
         val isMatched = savedInstanceState.getBooleanArray("isMatched")
 
-        if (identifiers != null && isFaceUp != null && isMatched != null) { //Verificando che tutti e tre gli array siano diversi da null, ci assicuriamo che i dati siano stati correttamente salvati e possiamo procedere con il ripristino dello stato delle carte.
-            cards = identifiers.indices.map { index -> //riassociamo a ogni carta le relative informazioni di Memory Card
+        if (identifiers != null && isFaceUp != null && isMatched != null) { //questo if controlla che ci sia un Bundle salvato correttamente
+            cards = identifiers.indices.map { index ->
                 MemoryCard(
                     identifier = identifiers[index],
                     isFaceUp = isFaceUp[index],
@@ -77,14 +101,11 @@ class GameLogic(
                 )
             }
         }
-        indexOfSingleSelectedCard = savedInstanceState.getInt("indexOfSingleSelectedCard") .takeIf { it != -1 }
-        /* se c'è una carta precedentemente selezionata, ne ripristiniamo l'indice, è cruciale inserire il metodo: ".takeIf { it != -1 }" ,
-        poichè se non è stata selezionata nessuna carta in precedenza, allora: savedInstanceState.getInt("indexOfSingleSelectedCard") restituira : -1,
-        e di conseguenza: indexOfSingleSelectedCard dovrà essere null
-         */
+        indexOfSingleSelectedCard = savedInstanceState.getInt("indexOfSingleSelectedCard").takeIf { it != -1 } //se troviamo un valore uguale a -1, significa che non c'era nessuna carta selezionata
         updateViews()
     }
-    private fun restoreCards() { //riporta le carte non accoppiate allo stato originale (non girato)
+
+    private fun restoreCards() {
         for (card in cards) {
             if (!card.isMatched) {
                 card.isFaceUp = false
@@ -94,13 +115,26 @@ class GameLogic(
 
     private fun checkForMatch(position1: Int, position2: Int) {
         if (cards[position1].identifier == cards[position2].identifier) {
-            Toast.makeText(buttons[position1].context, "Match found!!", Toast.LENGTH_SHORT).show()
             cards[position1].isMatched = true
             cards[position2].isMatched = true
+            ToastContextCallback("Match found!")
         }
     }
 
     private fun updateViews() {
         updateViewsCallback(cards)
     }
+    private fun checkAllMatched() { //questo metodo controlla se tutte le carte sono state matchate ed in caso affermatico ritorna la callback
+        var allMatched = true
+        for (card in cards) {
+            if (!card.isMatched) {
+                allMatched = false
+                break
+            }
+        }
+        if (allMatched) {
+            onAllCardsMatchedCallback()
+        }
+    }
+    fun getCards(): List<MemoryCard> = cards
 }
