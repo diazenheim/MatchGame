@@ -20,7 +20,7 @@ class GameLogic(
         setupGame()
     }
 
-    private fun setupGame() { //a seconda che il round sia 1 o 2, la lista di immagini cambia
+    public fun setupGame() { //a seconda che il round sia 1 o 2, la lista di immagini cambia
         val images: MutableList<Int> = mutableListOf()
         if (round == 1) {
             images.addAll(listOf(
@@ -84,7 +84,7 @@ class GameLogic(
         savedState.putIntArray("cardIdentifiers", cards.map { it.identifier }.toIntArray())
         savedState.putBooleanArray("isFaceUp", cards.map { it.isFaceUp }.toBooleanArray())
         savedState.putBooleanArray("isMatched", cards.map { it.isMatched }.toBooleanArray())
-        savedState.putInt("indexOfSingleSelectedCard", indexOfSingleSelectedCard ?: -1)
+        savedState.putInt("indexOfSingleSelectedCard", indexOfSingleSelectedCard ?: -1) //inseriamo -1 se indexOfSingleSelectedCard è null
     }
 
     fun restoreState(savedInstanceState: Bundle) {
@@ -124,7 +124,7 @@ class GameLogic(
     private fun updateViews() {
         updateViewsCallback(cards)
     }
-    private fun checkAllMatched() { //questo metodo controlla se tutte le carte sono state matchate ed in caso affermatico ritorna la callback
+    private fun checkAllMatched() { //questo metodo controlla se tutte le carte sono state matchate ed in caso affermativo ritorna la callback
         var allMatched = true
         for (card in cards) {
             if (!card.isMatched) {

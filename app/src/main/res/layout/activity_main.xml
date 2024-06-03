@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/pokemon_background_portarit"
+    android:background="@drawable/pokemon_background_portrait"
     android:gravity="center"
     tools:context=".ui.HomeFragment"
     tools:ignore="MissingClass">

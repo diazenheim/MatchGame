@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.matchgame.R
 import com.example.matchgame.models.MemoryCard
 
+//gestisce la logica per la visualizzazione delle carte nella RecyclerView usata per il secondo round
 class CardAdapter(
     private var cards: List<MemoryCard>,
     private val cardClickListener: (Int) -> Unit
@@ -34,7 +35,10 @@ class CardAdapter(
         private val imageButton: ImageButton = itemView.findViewById(R.id.imgbtn)
 
         fun bind(card: MemoryCard, cardClickListener: (Int) -> Unit) { //associa i dati della MemoryCard alla vista
-            imageButton.setImageResource(if (card.isFaceUp) card.identifier else R.drawable.card_down)
+            if (card.isFaceUp) imageButton.setImageResource(card.identifier)
+            else imageButton.setImageResource(R.drawable.card_down)
+            if(card.isMatched) imageButton.alpha = 0.1f
+            else imageButton.alpha = 1.0f
             imageButton.setOnClickListener { cardClickListener(adapterPosition) }// Imposta il listener per il click, che chiamerà la callback con la posizione della carta
         }
     }
