@@ -1,7 +1,6 @@
 package com.example.matchgame.logic
 
 import android.os.Bundle
-import android.widget.Toast
 import com.example.matchgame.R
 import com.example.matchgame.models.MemoryCard
 
@@ -29,7 +28,7 @@ class GameLogic(
                 R.drawable.three,
                 R.drawable.four
             ))
-        } else if (round == 2) {
+        } else if (round == 2 || round == 3) {
             images.addAll(listOf(
                 R.drawable.one,
                 R.drawable.two,
@@ -40,7 +39,7 @@ class GameLogic(
                 R.drawable.seven,
                 R.drawable.eight
             ))
-        }
+            }
         images.addAll(images)// Raddoppio delle immagini per creare coppie
         images.shuffle() //mischio carte
         val tempCards = mutableListOf<MemoryCard>() //creo una lista temporanea per gestire l'inserimento delle carte
