@@ -18,6 +18,7 @@ import com.example.matchgame.logic.GameLogic
 import com.example.matchgame.models.MemoryCard
 import com.example.matchgame.adapter.CardAdapter
 
+
 class Round2Fragment : Fragment() {
 
     private lateinit var gameLogic: GameLogic
@@ -25,7 +26,7 @@ class Round2Fragment : Fragment() {
     private lateinit var recyclerView: RecyclerView
     private var isGameLogicInitialized = false
     private lateinit var timer: CountDownTimer
-    private var timeRemaining: Long = 35000 // Default time is 35 seconds
+    private var timeRemaining: Long = 90000 // Default time is 90 seconds
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -40,13 +41,15 @@ class Round2Fragment : Fragment() {
         return view
     }
 
+
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         gameLogic = GameLogic(this::updateViews, this::onAllCardsMatched, this::showToast, 2)
         isGameLogicInitialized = true
         savedInstanceState?.let {
             gameLogic.restoreState(it)
-            timeRemaining = it.getLong("timeRemaining", 35000) // Restore the timer state
+            timeRemaining = it.getLong("timeRemaining", 90000) // Restore the timer state
         }
         Log.d("Round2Fragment", "onViewCreated called")
         startTimer(timeRemaining)
@@ -62,10 +65,11 @@ class Round2Fragment : Fragment() {
     private fun setupRecyclerView() { //a seconda che l'orientamento è portrait o landscape, lo scrolling nella RecycleView sarà orizzontale o verticale
         val orientation = resources.configuration.orientation
         recyclerView.layoutManager = if (orientation == Configuration.ORIENTATION_PORTRAIT) {
-            GridLayoutManager(context, 4, GridLayoutManager.HORIZONTAL, false)
+            GridLayoutManager(context, 2, GridLayoutManager.VERTICAL, false)
         } else {
             GridLayoutManager(context, 4, GridLayoutManager.VERTICAL, false)
         }
+
     }
 
     private fun onAllCardsMatched() {
