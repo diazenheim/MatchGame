@@ -3,11 +3,13 @@ package com.example.matchgame.logic
 import android.os.Bundle
 import com.example.matchgame.R
 import com.example.matchgame.models.MemoryCard
+import com.example.matchgame.telemetry.DataCollector
 
 class GameLogic(
+
     private val updateViewsCallback: (List<MemoryCard>) -> Unit, //non gestiamo più la visualizzazione delle carte con una lista di image Button bensì affidiamo la presentazione a CardAdapter, in modo da separare la logica del gioco dalla logica di presentazione
     private val onAllCardsMatchedCallback: () -> Unit, //questa callback controlla se tutte le carte sono state matchate
-    private val ToastContextCallback: (String) -> Unit ,// Questa callback permette di mostrare il Toast nel fragment che ha inizializzato l'istanza di gameLogic
+    private val ToastContextCallback: (String) -> Unit,// Questa callback permette di mostrare il Toast nel fragment che ha inizializzato l'istanza di gameLogic
     private val round: Int //questa variabile traccia il round corrente
 
 ) {

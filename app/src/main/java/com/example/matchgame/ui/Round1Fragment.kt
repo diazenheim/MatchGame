@@ -14,12 +14,14 @@ import androidx.fragment.app.Fragment
 import com.example.matchgame.R
 import com.example.matchgame.logic.GameLogic
 import com.example.matchgame.models.MemoryCard
+import com.example.matchgame.telemetry.DataCollector
 
 class Round1Fragment : Fragment() {
 
+    private lateinit var dataCollector: DataCollector
+    private val TAG = "Round1Fragment"
     private lateinit var buttons: List<ImageButton>
     private lateinit var gameLogic: GameLogic
-    //private lateinit var dataCollector: DataCollector
     private var isGameLogicInitialized = false
     private lateinit var timer: CountDownTimer
     private var timeRemaining: Long = 30000 // Default time is 30 seconds
@@ -29,7 +31,9 @@ class Round1Fragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.round1_layout, container, false)
+        val view = inflater.inflate(R.layout.round1_layout, container, false)
+        dataCollector = DataCollector(requireContext())
+        return view
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -65,10 +69,11 @@ class Round1Fragment : Fragment() {
         for (index in buttons.indices) {
             val button = buttons[index]
             button.setOnClickListener {
-                // Track button click event
-                //dataCollector.trackButton("button${index + 1}")
-                Log.i(TAG, "clicked the button")
                 gameLogic.onCardClicked(index)
+                // Log card flip event
+                dataCollector.logCardFlipped(index)
+                // Track button click event
+                Log.i(TAG, "clicked the button")
             }
         }
 
