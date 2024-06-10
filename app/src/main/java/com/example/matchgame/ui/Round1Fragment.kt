@@ -25,6 +25,8 @@ class Round1Fragment : Fragment() {
     private var isGameLogicInitialized = false
     private lateinit var timer: CountDownTimer
     private var timeRemaining: Long = 30000 // Default time is 30 seconds
+    private var startTime: Long = 0 // Variable to store start time
+    private var isGameCompleted: Boolean = false // Track if the game is completed
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -33,6 +35,7 @@ class Round1Fragment : Fragment() {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.round1_layout, container, false)
         dataCollector = DataCollector(requireContext())
+        startTime = System.currentTimeMillis() // Record the start time
         return view
     }
 
@@ -85,6 +88,14 @@ class Round1Fragment : Fragment() {
         super.onDestroyView()
         timer.cancel() // Cancelliamo il timer per evitare memory leaks
     }
+
+    override fun onPause() {
+        super.onPause()
+        if (!isGameCompleted) {
+            dataCollector.logGameAbandonment(level = 1) // Log game abandonment if the game is not completed
+        }
+    }
+
     private fun updateViews(cards: List<MemoryCard>) {
         for (index in cards.indices) {
             val card = cards[index]
@@ -98,6 +109,11 @@ class Round1Fragment : Fragment() {
         }
     }
     private fun onAllCardsMatched() { //quando tutte carte sono matchate avviato il fragment relativo al round2
+        val endTime = System.currentTimeMillis()
+        val timeTaken = endTime - startTime
+        dataCollector.logLevelCompletionTime(level = 1, timeTaken = timeTaken) // Log the level completion time
+        isGameCompleted = true // Set the game as completed
+
         parentFragmentManager.beginTransaction()
             .replace(R.id.fragment_main_container, Round2Fragment())
             .commit()
