@@ -17,6 +17,7 @@ import com.example.matchgame.R
 import com.example.matchgame.logic.GameLogic
 import com.example.matchgame.models.MemoryCard
 import com.example.matchgame.adapter.CardAdapter
+import com.example.matchgame.telemetry.DataCollector
 
 
 class Round2Fragment : Fragment() {
@@ -26,7 +27,11 @@ class Round2Fragment : Fragment() {
     private lateinit var recyclerView: RecyclerView
     private var isGameLogicInitialized = false
     private lateinit var timer: CountDownTimer
-    private var timeRemaining: Long = 60000 // Default time is 90 seconds
+    private var timeRemaining: Long = 60000 // Default time is 60 seconds
+    private lateinit var dataCollector: DataCollector
+    private var startTime: Long = 0 // Variable to store start time
+    private var isGameCompleted: Boolean = false // Track if the game is completed
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -37,6 +42,10 @@ class Round2Fragment : Fragment() {
         setupRecyclerView()
         cardAdapter = CardAdapter(mutableListOf(), this::onCardClicked)
         recyclerView.adapter = cardAdapter
+
+        // Initialize DataCollector
+        dataCollector = DataCollector(requireContext())
+        startTime = System.currentTimeMillis() // Record the start time
 
         return view
     }
@@ -73,6 +82,11 @@ class Round2Fragment : Fragment() {
     }
 
     private fun onAllCardsMatched() { //quando tutte carte sono matchate avviato il fragment relativo al round2
+        val endTime = System.currentTimeMillis()
+        val durationSeconds = (endTime - startTime) / 1000 // Convert milliseconds to seconds
+        dataCollector.logLevelCompletionTime(level = 2, durationSeconds) // Log the level completion time in seconds
+        isGameCompleted = true // Set the game as completed
+
         parentFragmentManager.beginTransaction()
             .replace(R.id.fragment_main_container, Round3Fragment())
             .commit()
@@ -92,7 +106,7 @@ class Round2Fragment : Fragment() {
                 // Aggiorna il timer ogni 1000 millisecondi(coundownInterval)
                 timeRemaining = RemainingTimeInMillis
                 val secondsRemaining = RemainingTimeInMillis / 1000
-                var timerTextView: TextView? = view?.findViewById(R.id.timerTextView)
+                val timerTextView: TextView? = view?.findViewById(R.id.timerTextView)
                 timerTextView?.text = "Tempo mancante: " + secondsRemaining.toString() + " secondi"
                 Log.i(ContentValues.TAG, "Seconds remaining: $secondsRemaining")
             }
@@ -106,6 +120,13 @@ class Round2Fragment : Fragment() {
                     .commit()
             }
         }.start() // Avviamo il timer
+    }
+
+    override fun onPause() {
+        super.onPause()
+        if (!isGameCompleted) {
+            dataCollector.logGameAbandonment(level = 2) // Log game abandonment if the game is not completed
+        }
     }
     override fun onSaveInstanceState(savedState: Bundle) {
         super.onSaveInstanceState(savedState)

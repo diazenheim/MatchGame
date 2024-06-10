@@ -32,11 +32,11 @@ class HomeFragment : Fragment() {
 
         // Set the listener for the play button
         playModeButton.setOnClickListener {
-                // Se premo il button "play_mode" viene eseguito ilfragment: "UiFragment"
-                parentFragmentManager.beginTransaction()
-                    .replace(R.id.fragment_main_container, Round1Fragment()) // fragment_main_container in questo momento funge da container per l'HomeFragment, con questa istruzione viene rimpiazzato con il fragment: "UiFragment"
-                    .addToBackStack(null) //l'utente può premere il tasto "indietro" per tornare al HomeFragment dopo che UiFragment è stato visualizzato.
-                    .commit() //Conferma la transazione del fragment
+            // Se premo il button "play_mode" viene eseguito ilfragment: "UiFragment"
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.fragment_main_container, Round1Fragment()) // fragment_main_container in questo momento funge da container per l'HomeFragment, con questa istruzione viene rimpiazzato con il fragment: "UiFragment"
+                .addToBackStack(null) //l'utente può premere il tasto "indietro" per tornare al HomeFragment dopo che UiFragment è stato visualizzato.
+                .commit() //Conferma la transazione del fragment
         }
     }
 }

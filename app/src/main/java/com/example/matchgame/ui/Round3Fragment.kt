@@ -1,5 +1,6 @@
 package com.example.matchgame.ui
 
+import android.annotation.SuppressLint
 import android.content.ContentValues
 import android.content.res.Configuration
 import android.os.Bundle
@@ -17,6 +18,7 @@ import com.example.matchgame.R
 import com.example.matchgame.logic.GameLogic
 import com.example.matchgame.models.MemoryCard
 import com.example.matchgame.adapter.CardAdapter
+import com.example.matchgame.telemetry.DataCollector
 
 
 class Round3Fragment : Fragment() {
@@ -27,31 +29,39 @@ class Round3Fragment : Fragment() {
     private var isGameLogicInitialized = false
     private lateinit var timer: CountDownTimer
     private var timeRemaining: Long = 90000 // Default time is 90 seconds
+    private lateinit var dataCollector: DataCollector
+    private var startTime: Long = 0 // Variable to store start time
+    private var isGameCompleted: Boolean = false // Track if the game is completed
+
+    @SuppressLint("MissingInflatedId")
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.round3_layout, container, false)
 
-        recyclerView = view.findViewById(R.id.recyclerView_round2)
+        recyclerView = view.findViewById(R.id.recyclerView_round3)
         setupRecyclerView()
         cardAdapter = CardAdapter(mutableListOf(), this::onCardClicked)
         recyclerView.adapter = cardAdapter
+
+        // Initialize DataCollector
+        dataCollector = DataCollector(requireContext())
+        startTime = System.currentTimeMillis() // Record the start time
 
         return view
     }
 
 
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        gameLogic = GameLogic(this::updateViews, this::onAllCardsMatched, this::showToast, 2)
+        gameLogic = GameLogic(this::updateViews, this::onAllCardsMatched, this::showToast, 3)
         isGameLogicInitialized = true
         savedInstanceState?.let {
             gameLogic.restoreState(it)
             timeRemaining = it.getLong("timeRemaining", 90000) // Restore the timer state
         }
-        Log.d("Round2Fragment", "onViewCreated called")
+        Log.d("Round3Fragment", "onViewCreated called")
         startTimer(timeRemaining)
     }
     override fun onDestroyView() {
@@ -59,10 +69,10 @@ class Round3Fragment : Fragment() {
         timer.cancel() // Cancella il timer per evitare memory leaks
     }
     private fun updateViews(cards: List<MemoryCard>) { //delego l'aggiornamento delle carte alla classe Adapter
-        Log.d("Round2Fragment", "Updating views with cards: $cards")
+        Log.d("Round3Fragment", "Updating views with cards: $cards")
         cardAdapter.updateCards(cards)
     }
-    private fun setupRecyclerView() { //a seconda che l'orientamento è portrait o landscape, lo scrolling nella RecycleView sarà orizzontale o verticale
+    private fun setupRecyclerView() {
         val orientation = resources.configuration.orientation
         recyclerView.layoutManager = if (orientation == Configuration.ORIENTATION_PORTRAIT) {
             GridLayoutManager(context, 2, GridLayoutManager.VERTICAL, false)
@@ -73,6 +83,11 @@ class Round3Fragment : Fragment() {
     }
 
     private fun onAllCardsMatched() {
+        val endTime = System.currentTimeMillis()
+        val durationSeconds = (endTime - startTime) / 1000 // Convert milliseconds to seconds
+        dataCollector.logLevelCompletionTime(level = 3, durationSeconds) // Log the level completion time in seconds
+        isGameCompleted = true // Set the game as completed
+
         parentFragmentManager.beginTransaction()
             .replace(R.id.fragment_main_container, YouWinFragment())
             .commit()
@@ -92,7 +107,7 @@ class Round3Fragment : Fragment() {
                 // Aggiorna il timer ogni 1000 millisecondi(coundownInterval)
                 timeRemaining = RemainingTimeInMillis
                 val secondsRemaining = RemainingTimeInMillis / 1000
-                var timerTextView: TextView? = view?.findViewById(R.id.timerTextView)
+                val timerTextView: TextView? = view?.findViewById(R.id.timerTextView)
                 timerTextView?.text = "Tempo mancante: " + secondsRemaining.toString() + " secondi"
                 Log.i(ContentValues.TAG, "Seconds remaining: $secondsRemaining")
             }
@@ -107,6 +122,14 @@ class Round3Fragment : Fragment() {
             }
         }.start() // Avviamo il timer
     }
+
+    override fun onPause() {
+        super.onPause()
+        if (!isGameCompleted) {
+            dataCollector.logGameAbandonment(level = 3) // Log game abandonment if the game is not completed
+        }
+    }
+
         override fun onSaveInstanceState(savedState: Bundle) {
             super.onSaveInstanceState(savedState)
             if (isGameLogicInitialized) { //Salviamo l'oggetto GameLogic solo se è stato inizializzato, altrimenti avremmo un'eccezione

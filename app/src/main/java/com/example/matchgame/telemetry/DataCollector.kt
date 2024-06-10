@@ -1,11 +1,14 @@
 package com.example.matchgame.telemetry
 
+import android.app.ActivityManager
 import android.content.Context
 import android.os.Bundle
 import com.google.firebase.analytics.FirebaseAnalytics
 
+
 class DataCollector(context: Context) {
 
+    private val appContext = context.applicationContext
     private val firebaseAnalytics: FirebaseAnalytics = FirebaseAnalytics.getInstance(context)
 
     fun trackButton(buttonName: String) {
@@ -43,10 +46,10 @@ class DataCollector(context: Context) {
 
     //Track the time taken to complete each level or round.
     // Useful to understand the difficulty of each level.
-    fun logLevelCompletionTime(level: Int, timeTaken: Long) {
+    fun logLevelCompletionTime(level: Int, timeTakenSeconds: Long) {
         val bundle = Bundle().apply {
             putInt("level", level)
-            putLong("time_taken", timeTaken)
+            putLong("time_taken_seconds", timeTakenSeconds)
         }
         logEvent("level_completion_time", bundle)
     }
@@ -92,6 +95,32 @@ class DataCollector(context: Context) {
     //Useful for segmenting your user base.
     fun setUserProperty(propertyName: String, propertyValue: String) {
         firebaseAnalytics.setUserProperty(propertyName, propertyValue)
+    }
+
+    fun logRAMUsage() {
+        val memoryInfo = getMemoryUsage()
+        val availMemMB = memoryInfo.availMem / 1024.0 / 1024.0 // Convert to MB
+        val totalMemGB = memoryInfo.totalMem / 1024.0 / 1024.0 / 1024.0 // Convert to GB
+        val bundle = Bundle().apply {
+            putDouble("avail_mem_MB", availMemMB)
+            putDouble("total_mem_GB", totalMemGB)
+            putBoolean("low_memory", memoryInfo.lowMemory)
+        }
+        logEvent("memory_usage", bundle)
+    }
+
+    private fun getMemoryUsage(): ActivityManager.MemoryInfo {
+        val activityManager = appContext.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+        val memoryInfo = ActivityManager.MemoryInfo()
+        activityManager.getMemoryInfo(memoryInfo)
+        return memoryInfo
+    }
+
+    fun logGameDuration(durationSeconds: Long) {
+        val bundle = Bundle().apply {
+            putLong("game_duration_seconds", durationSeconds)
+        }
+        logEvent("game_duration", bundle)
     }
 
     // Add more telemetry functions as needed, bitch

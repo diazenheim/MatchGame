@@ -1,8 +1,10 @@
 package com.example.matchgame
 
+import android.os.Build
 import android.os.Bundle
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
+import com.example.matchgame.telemetry.DataCollector
 import com.example.matchgame.ui.HomeFragment
 import com.google.firebase.FirebaseApp
 import com.google.firebase.analytics.FirebaseAnalytics
@@ -11,6 +13,7 @@ import com.google.firebase.analytics.FirebaseAnalytics
 class MainActivity : AppCompatActivity() {
     private lateinit var playModeButton: ImageView
     private lateinit var firebaseAnalytics: FirebaseAnalytics
+    private lateinit var dataCollector: DataCollector
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,11 +28,31 @@ class MainActivity : AppCompatActivity() {
         // Log a test event to verify that events are being logged
         logTestEvent()
 
+        // Initialize DataCollector
+        dataCollector = DataCollector(this)
+
+        // Set user properties
+        setUserProperties()
+
+        // Log RAM usage
+        dataCollector.logRAMUsage()
+
+
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction()
                 .replace(R.id.fragment_main_container, HomeFragment()) // Launch HomeFragment
                 .commitNow()
         }
+    }
+
+    private fun setUserProperties() {
+        // Track device type
+        val deviceType = Build.MODEL
+        dataCollector.setUserProperty("device_type", deviceType)
+
+        // Track OS version
+        val osVersion = Build.VERSION.RELEASE
+        dataCollector.setUserProperty("os_version", osVersion)
     }
 
     private fun logTestEvent() {

@@ -110,8 +110,8 @@ class Round1Fragment : Fragment() {
     }
     private fun onAllCardsMatched() { //quando tutte carte sono matchate avviato il fragment relativo al round2
         val endTime = System.currentTimeMillis()
-        val timeTaken = endTime - startTime
-        dataCollector.logLevelCompletionTime(level = 1, timeTaken = timeTaken) // Log the level completion time
+        val durationSeconds = (endTime - startTime) / 1000 // Convert milliseconds to seconds
+        dataCollector.logLevelCompletionTime(1, durationSeconds) // Log level completion time
         isGameCompleted = true // Set the game as completed
 
         parentFragmentManager.beginTransaction()
