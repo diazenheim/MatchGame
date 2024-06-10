@@ -26,7 +26,7 @@ class Round2Fragment : Fragment() {
     private lateinit var recyclerView: RecyclerView
     private var isGameLogicInitialized = false
     private lateinit var timer: CountDownTimer
-    private var timeRemaining: Long = 90000 // Default time is 90 seconds
+    private var timeRemaining: Long = 60000 // Default time is 90 seconds
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -49,7 +49,7 @@ class Round2Fragment : Fragment() {
         isGameLogicInitialized = true
         savedInstanceState?.let {
             gameLogic.restoreState(it)
-            timeRemaining = it.getLong("timeRemaining", 90000) // Restore the timer state
+            timeRemaining = it.getLong("timeRemaining", 60000) // Restore the timer state
         }
         Log.d("Round2Fragment", "onViewCreated called")
         startTimer(timeRemaining)
@@ -72,9 +72,9 @@ class Round2Fragment : Fragment() {
 
     }
 
-    private fun onAllCardsMatched() {
+    private fun onAllCardsMatched() { //quando tutte carte sono matchate avviato il fragment relativo al round2
         parentFragmentManager.beginTransaction()
-            .replace(R.id.fragment_main_container, YouWinFragment())
+            .replace(R.id.fragment_main_container, Round3Fragment())
             .commit()
     }
 
@@ -107,12 +107,13 @@ class Round2Fragment : Fragment() {
             }
         }.start() // Avviamo il timer
     }
-        override fun onSaveInstanceState(savedState: Bundle) {
-            super.onSaveInstanceState(savedState)
-            if (isGameLogicInitialized) { //Salviamo l'oggetto GameLogic solo se è stato inizializzato, altrimenti avremmo un'eccezione
-                gameLogic.saveState(savedState)
-            }
-            // Save the remaining time
-            savedState.putLong("timeRemaining", timeRemaining)
+    override fun onSaveInstanceState(savedState: Bundle) {
+        super.onSaveInstanceState(savedState)
+        if (isGameLogicInitialized) { //Salviamo l'oggetto GameLogic solo se è stato inizializzato, altrimenti avremmo un'eccezione
+            gameLogic.saveState(savedState)
         }
+        // Save the remaining time
+        savedState.putLong("timeRemaining", timeRemaining)
+    }
+
 }

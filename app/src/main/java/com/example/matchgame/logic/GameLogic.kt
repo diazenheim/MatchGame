@@ -15,11 +15,12 @@ class GameLogic(
     private lateinit var cards: List<MemoryCard>
     private var indexOfSingleSelectedCard: Int? = null
 
+
     init {
         setupGame()
     }
 
-    public fun setupGame() { //a seconda che il round sia 1 o 2, la lista di immagini cambia
+     fun setupGame() { //a seconda che il round sia 1 o 2, la lista di immagini cambia
         val images: MutableList<Int> = mutableListOf()
         if (round == 1) {
             images.addAll(listOf(
@@ -28,7 +29,7 @@ class GameLogic(
                 R.drawable.three,
                 R.drawable.four
             ))
-        } else if (round == 2 || round == 3) {
+        } else if (round == 3) {
             images.addAll(listOf(
                 R.drawable.one,
                 R.drawable.two,
@@ -39,7 +40,16 @@ class GameLogic(
                 R.drawable.seven,
                 R.drawable.eight
             ))
-            }
+        } else if (round == 2){
+            images.addAll(listOf(
+                R.drawable.one,
+                R.drawable.two,
+                R.drawable.three,
+                R.drawable.four,
+                R.drawable.five,
+                R.drawable.six,
+            ))
+        }
         images.addAll(images)// Raddoppio delle immagini per creare coppie
         images.shuffle() //mischio carte
         val tempCards = mutableListOf<MemoryCard>() //creo una lista temporanea per gestire l'inserimento delle carte

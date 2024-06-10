@@ -14,13 +14,12 @@ import androidx.fragment.app.Fragment
 import com.example.matchgame.R
 import com.example.matchgame.logic.GameLogic
 import com.example.matchgame.models.MemoryCard
-import com.example.matchgame.telemetry.DataCollector
 
 class Round1Fragment : Fragment() {
 
     private lateinit var buttons: List<ImageButton>
     private lateinit var gameLogic: GameLogic
-    private lateinit var dataCollector: DataCollector
+    //private lateinit var dataCollector: DataCollector
     private var isGameLogicInitialized = false
     private lateinit var timer: CountDownTimer
     private var timeRemaining: Long = 30000 // Default time is 30 seconds
@@ -37,7 +36,7 @@ class Round1Fragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         // Initialize DataCollector
-        dataCollector = DataCollector(requireContext())
+        //dataCollector = DataCollector(requireContext())
 
         // List of the image buttons from round1_layout.xml:
         buttons = listOf(
@@ -66,13 +65,13 @@ class Round1Fragment : Fragment() {
         for (index in buttons.indices) {
             val button = buttons[index]
             button.setOnClickListener {
-                Log.i(TAG, "clicked the button")
                 // Track button click event
-                dataCollector.trackButton("button${index + 1}")
-
+                //dataCollector.trackButton("button${index + 1}")
+                Log.i(TAG, "clicked the button")
                 gameLogic.onCardClicked(index)
             }
         }
+
 
         // Initialize and start the timer
         startTimer(timeRemaining)
@@ -110,7 +109,6 @@ class Round1Fragment : Fragment() {
                 val secondsRemaining = RemainingTimeInMillis / 1000
                 var timerTextView : TextView? = view?.findViewById(R.id.timerTextView)
                 timerTextView?.text= "Tempo mancante: "+secondsRemaining.toString()+" secondi"
-                Log.i(TAG, "Seconds remaining: $secondsRemaining")
             }
 
             override fun onFinish() {
