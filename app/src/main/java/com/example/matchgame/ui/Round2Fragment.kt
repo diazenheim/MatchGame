@@ -50,6 +50,7 @@ class Round2Fragment : BaseRoundFragment() {
         super.onAllCardsMatched()
         // Usa il NavController per navigare al round successivo
         findNavController().navigate(R.id.action_round2Fragment_to_round3Fragment)
+        Log.d("Round2Fragment", "Dove sono")
     }
 }
 

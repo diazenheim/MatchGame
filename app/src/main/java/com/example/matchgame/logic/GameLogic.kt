@@ -55,7 +55,7 @@ class GameLogic(
         images.addAll(images)// Raddoppio delle immagini per creare coppie
         images.shuffle() //mischio carte
         val tempCards = mutableListOf<MemoryCard>() //creo una lista temporanea per gestire l'inserimento delle carte
-        for (index in 0 until numberOfCards) {
+        for (index in 0 until (numberOfCards)) {
             tempCards.add(MemoryCard(images[index]))
         }
         cards = tempCards

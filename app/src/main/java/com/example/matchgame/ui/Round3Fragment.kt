@@ -41,7 +41,7 @@ class Round3Fragment : BaseRoundFragment() {
     }
 
     override fun getNumberOfCards(): Int {
-        return 8 // Specifica il numero di carte per il round 2
+        return 16 // Specifica il numero di carte per il round 2
     }
 
     override fun onCardClicked(position: Int) {
@@ -52,7 +52,7 @@ class Round3Fragment : BaseRoundFragment() {
         super.onAllCardsMatched()
 
         // Visualizziamo il fragment: YouLoseFragment
-        findNavController().navigate(R.id.action_round1Fragment_to_youLoseFragment)
+        findNavController().navigate(R.id.action_round3Fragment_to_youWinFragment)
 
     }
 }

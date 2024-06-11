@@ -104,9 +104,9 @@ abstract class BaseRoundFragment : Fragment() {
             val endTime = System.currentTimeMillis()
             val durationSeconds = (endTime - startTime) / 1000 // Convert milliseconds to seconds
             DataCollector.logLevelCompletionTime(getLevel(), durationSeconds) // Log level completion time
-            isGameCompleted = true // Set the game as completed
+            //isGameCompleted = true // Set the game as completed
 
-            findNavController().navigate(getNextRoundFragment())
+
         } catch (e: Exception) {
             DataCollector.logError("Errore durante onAllCardsMatched di BaseRoundFragment: ${e.message}")
         }
