@@ -8,35 +8,47 @@ import android.widget.ImageButton
 import androidx.fragment.app.Fragment
 import com.example.matchgame.R
 import com.example.matchgame.telemetry.DataCollector
+import androidx.navigation.fragment.findNavController
+import android.util.Log
 
 class HomeFragment : Fragment() {
 
-    private lateinit var dataCollector: DataCollector
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        val view =  inflater.inflate(R.layout.activity_main, container, false)
-        dataCollector = DataCollector(requireContext())
-        dataCollector.logGameStart()
-        return view
+        Log.d("mainActivity", "AppStarted")
+
+            // Inflate the layout for this fragment
+            val view = inflater.inflate(R.layout.home_layout, container, false)
+            Log.d("mainActivity","gay")
+            //DataCollector.logGameStart()
+        Log.d("mainActivity", "2")
+            return view
+
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        try {
+            Log.d("mainActivity", "3")
 
-        // Find the playModeButton in the layout
-        val playModeButton: ImageButton = view.findViewById(R.id.play_button)
 
-        // Set the listener for the play button
-        playModeButton.setOnClickListener {
-            // Se premo il button "play_mode" viene eseguito ilfragment: "UiFragment"
-            parentFragmentManager.beginTransaction()
-                .replace(R.id.fragment_main_container, Round1Fragment()) // fragment_main_container in questo momento funge da container per l'HomeFragment, con questa istruzione viene rimpiazzato con il fragment: "UiFragment"
-                .addToBackStack(null) //l'utente può premere il tasto "indietro" per tornare al HomeFragment dopo che UiFragment è stato visualizzato.
-                .commit() //Conferma la transazione del fragment
+            // Find the playModeButton in the layout
+            val playModeButton: ImageButton = view.findViewById(R.id.play_button)
+            Log.d("mainActivity", "3.5")
+            // Set the listener for the play button
+            playModeButton.setOnClickListener {
+                try {
+                    Log.d("mainActivity", "4")
+                    findNavController().navigate(R.id.action_homeFragment_to_round1Fragment)
+                }catch(e: Exception){
+                    DataCollector.logError("Errore durante il click del playButton: ${e.message}")
+                }
+            }
+        } catch (e: Exception) {
+            DataCollector.logError("Errore durante onViewCreated: ${e.message}")
         }
     }
 }

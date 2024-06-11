@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/homeFragment">
+
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="com.example.matchgame.ui.HomeFragment"
+        android:label="Home"
+        tools:layout="@layout/home_layout">
+        <action
+            android:id="@+id/action_homeFragment_to_round1Fragment"
+            app:destination="@id/round1Fragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/round1Fragment"
+        android:name="com.example.matchgame.ui.Round1Fragment"
+        android:label="Round 1"
+        tools:layout="@layout/round1_layout">
+        <action
+            android:id="@+id/action_round1Fragment_to_round2Fragment"
+            app:destination="@id/round2Fragment" />
+        <action
+            android:id="@+id/action_round1Fragment_to_youLoseFragment"
+            app:destination="@id/youLoseFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/round2Fragment"
+        android:name="com.example.matchgame.ui.Round2Fragment"
+        android:label="Round 2"
+        tools:layout="@layout/round2_layout">
+        <action
+            android:id="@+id/action_round2Fragment_to_round3Fragment"
+            app:destination="@id/round3Fragment" />
+        <action
+            android:id="@+id/action_round2Fragment_to_youLoseFragment"
+            app:destination="@id/youLoseFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/round3Fragment"
+        android:name="com.example.matchgame.ui.Round3Fragment"
+        android:label="Round 3"
+        tools:layout="@layout/round3_layout">
+        <action
+            android:id="@+id/action_round3Fragment_to_youWinFragment"
+            app:destination="@id/youWinFragment" />
+        <action
+            android:id="@+id/action_round3Fragment_to_youLoseFragment"
+            app:destination="@id/youLoseFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/youLoseFragment"
+        android:name="com.example.matchgame.ui.YouLoseFragment"
+        android:label="Lose Layout"
+        tools:layout="@layout/youlose_layout"/>
+
+
+    <fragment
+        android:id="@+id/youWinFragment"
+        android:name="com.example.matchgame.ui.YouWinFragment"
+        android:label="Win Layout"
+        tools:layout="@layout/youwin_layout"
+        />
+</navigation>

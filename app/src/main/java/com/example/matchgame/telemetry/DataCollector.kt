@@ -6,12 +6,17 @@ import android.os.Bundle
 import com.google.firebase.analytics.FirebaseAnalytics
 
 
-class DataCollector(context: Context) {
+object DataCollector {
 
-    private val appContext = context.applicationContext
-    private val firebaseAnalytics: FirebaseAnalytics = FirebaseAnalytics.getInstance(context)
+    private lateinit var appContext: Context
+    private lateinit var firebaseAnalytics: FirebaseAnalytics
 
+    fun initialize(context: Context){
+        appContext = context.applicationContext
+        firebaseAnalytics=FirebaseAnalytics.getInstance(appContext)
+    }
     fun trackButton(buttonName: String) {
+        ensureInitialized()
         val bundle = Bundle().apply {
             putString(FirebaseAnalytics.Param.ITEM_NAME, buttonName)
             putString("custom_param", "button_click")
@@ -20,7 +25,8 @@ class DataCollector(context: Context) {
     }
 
     private fun logEvent(eventName: String, params: Bundle? = null) {
-        firebaseAnalytics.logEvent(eventName, params)
+        ensureInitialized()
+        //firebaseAnalytics.logEvent(eventName, params)
     }
 
     fun logGameStart() {
@@ -94,6 +100,7 @@ class DataCollector(context: Context) {
     //Track user properties such as device type, OS version, and user demographics.
     //Useful for segmenting your user base.
     fun setUserProperty(propertyName: String, propertyValue: String) {
+        ensureInitialized()
         firebaseAnalytics.setUserProperty(propertyName, propertyValue)
     }
 
@@ -121,6 +128,12 @@ class DataCollector(context: Context) {
             putLong("game_duration_seconds", durationSeconds)
         }
         logEvent("game_duration", bundle)
+    }
+
+    private fun ensureInitialized(){
+        if(!::firebaseAnalytics.isInitialized){
+            throw  UninitializedPropertyAccessException("Firebase must be initialized")
+        }
     }
 
     // Add more telemetry functions as needed, bitch

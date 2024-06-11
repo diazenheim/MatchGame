@@ -20,8 +20,8 @@ class YouWinFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.youwin_layout, container, false)
-        dataCollector = DataCollector(requireContext())
-        dataCollector.logGameEnd("win")
+
+        DataCollector.logGameEnd("win")
         return view
     }
 

@@ -21,7 +21,7 @@
 
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerView_round2"
+        android:id="@+id/recyclerView_round"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_margin="10dp"

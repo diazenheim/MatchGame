@@ -18,123 +18,46 @@ import com.example.matchgame.logic.GameLogic
 import com.example.matchgame.models.MemoryCard
 import com.example.matchgame.adapter.CardAdapter
 import com.example.matchgame.telemetry.DataCollector
+import androidx.navigation.fragment.findNavController
 
-
-class Round2Fragment : Fragment() {
-
-    private lateinit var gameLogic: GameLogic
-    private lateinit var cardAdapter: CardAdapter
-    private lateinit var recyclerView: RecyclerView
-    private var isGameLogicInitialized = false
-    private lateinit var timer: CountDownTimer
-    private var timeRemaining: Long = 60000 // Default time is 60 seconds
-    private lateinit var dataCollector: DataCollector
-    private var startTime: Long = 0 // Variable to store start time
-    private var isGameCompleted: Boolean = false // Track if the game is completed
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        val view = inflater.inflate(R.layout.round2_layout, container, false)
-
-        recyclerView = view.findViewById(R.id.recyclerView_round2)
-        setupRecyclerView()
-        cardAdapter = CardAdapter(mutableListOf(), this::onCardClicked)
-        recyclerView.adapter = cardAdapter
-
-        // Initialize DataCollector
-        dataCollector = DataCollector(requireContext())
-        startTime = System.currentTimeMillis() // Record the start time
-
-        return view
+class Round2Fragment : BaseRoundFragment() {
+    override fun createGameLogic(): GameLogic {
+        return GameLogic(::updateViews, ::onAllCardsMatched, this::showToast, 2, getNumberOfCards())
     }
 
-
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        gameLogic = GameLogic(this::updateViews, this::onAllCardsMatched, this::showToast, 2)
-        isGameLogicInitialized = true
-        savedInstanceState?.let {
-            gameLogic.restoreState(it)
-            timeRemaining = it.getLong("timeRemaining", 60000) // Restore the timer state
-        }
-        Log.d("Round2Fragment", "onViewCreated called")
-        startTimer(timeRemaining)
-    }
-    override fun onDestroyView() {
-        super.onDestroyView()
-        timer.cancel() // Cancella il timer per evitare memory leaks
-    }
-    private fun updateViews(cards: List<MemoryCard>) { //delego l'aggiornamento delle carte alla classe Adapter
-        Log.d("Round2Fragment", "Updating views with cards: $cards")
-        cardAdapter.updateCards(cards)
-    }
-    private fun setupRecyclerView() { //a seconda che l'orientamento è portrait o landscape, lo scrolling nella RecycleView sarà orizzontale o verticale
-        val orientation = resources.configuration.orientation
-        recyclerView.layoutManager = if (orientation == Configuration.ORIENTATION_PORTRAIT) {
-            GridLayoutManager(context, 2, GridLayoutManager.VERTICAL, false)
-        } else {
-            GridLayoutManager(context, 4, GridLayoutManager.VERTICAL, false)
-        }
-
+    override fun getLayoutId(): Int {
+        return R.layout.round2_layout_container
     }
 
-    private fun onAllCardsMatched() { //quando tutte carte sono matchate avviato il fragment relativo al round2
-        val endTime = System.currentTimeMillis()
-        val durationSeconds = (endTime - startTime) / 1000 // Convert milliseconds to seconds
-        dataCollector.logLevelCompletionTime(level = 2, durationSeconds) // Log the level completion time in seconds
-        isGameCompleted = true // Set the game as completed
-
-        parentFragmentManager.beginTransaction()
-            .replace(R.id.fragment_main_container, Round3Fragment())
-            .commit()
+    override fun getLevel(): Int {
+        return 2
     }
 
-    private fun onCardClicked(position: Int) {
+    override fun getNextRoundFragment(): Int {
+
+        return R.id.round3Fragment
+    }
+
+    override fun getNumberOfCards(): Int {
+        return 12 // Specifica il numero di carte per il round 2
+    }
+
+    override fun onCardClicked(position: Int) {
         gameLogic.onCardClicked(position)
     }
 
-    private fun showToast(message: String) { //mostra i Toast provenienti dal GameLogic
-        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+    override fun onAllCardsMatched() {
+        super.onAllCardsMatched()
+        // Usa il NavController per navigare al round successivo
+        findNavController().navigate(R.id.action_round2Fragment_to_round3Fragment)
     }
-
-    private fun startTimer(timeInMillis: Long) {
-        timer = object : CountDownTimer(timeInMillis, 1000) {
-            override fun onTick(RemainingTimeInMillis: Long) {
-                // Aggiorna il timer ogni 1000 millisecondi(coundownInterval)
-                timeRemaining = RemainingTimeInMillis
-                val secondsRemaining = RemainingTimeInMillis / 1000
-                val timerTextView: TextView? = view?.findViewById(R.id.timerTextView)
-                timerTextView?.text = "Tempo mancante: " + secondsRemaining.toString() + " secondi"
-                Log.i(ContentValues.TAG, "Seconds remaining: $secondsRemaining")
-            }
-
-            override fun onFinish() {
-                // Questo metodo viene eseguito quando il timer termina
-                showToast("Time's up!")
-                // Visualizziamo il fragment: YouLoseFragment
-                parentFragmentManager.beginTransaction()
-                    .replace(R.id.fragment_main_container, YouLoseFragment())
-                    .commit()
-            }
-        }.start() // Avviamo il timer
-    }
-
-    override fun onPause() {
-        super.onPause()
-        if (!isGameCompleted) {
-            dataCollector.logGameAbandonment(level = 2) // Log game abandonment if the game is not completed
-        }
-    }
-    override fun onSaveInstanceState(savedState: Bundle) {
-        super.onSaveInstanceState(savedState)
-        if (isGameLogicInitialized) { //Salviamo l'oggetto GameLogic solo se è stato inizializzato, altrimenti avremmo un'eccezione
-            gameLogic.saveState(savedState)
-        }
-        // Save the remaining time
-        savedState.putLong("timeRemaining", timeRemaining)
-    }
-
 }
+
+
+
+
+
+
+
+
+

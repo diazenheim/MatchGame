@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">MatchGame</string>
+    <string name="time_remaining">Tempo mancante: %1$d secondi</string>
 </resources>

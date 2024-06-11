@@ -7,12 +7,12 @@
 
     >
     <include
-        android:id="@+id/play_layout"
+        android:id="@+id/round1_layout"
         layout="@layout/round1_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
     <FrameLayout
-        android:id="@+id/fragment_playmode_container"
+        android:id="@+id/fragment_round1_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />/>
+        android:layout_height="match_parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

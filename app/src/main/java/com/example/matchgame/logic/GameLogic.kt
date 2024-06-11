@@ -10,8 +10,8 @@ class GameLogic(
     private val updateViewsCallback: (List<MemoryCard>) -> Unit, //non gestiamo più la visualizzazione delle carte con una lista di image Button bensì affidiamo la presentazione a CardAdapter, in modo da separare la logica del gioco dalla logica di presentazione
     private val onAllCardsMatchedCallback: () -> Unit, //questa callback controlla se tutte le carte sono state matchate
     private val ToastContextCallback: (String) -> Unit,// Questa callback permette di mostrare il Toast nel fragment che ha inizializzato l'istanza di gameLogic
-    private val round: Int //questa variabile traccia il round corrente
-
+    private val round: Int, //questa variabile traccia il round corrente
+    private val numberOfCards: Int //identifica il numero di carte
 ) {
 
     private lateinit var cards: List<MemoryCard>
@@ -22,7 +22,7 @@ class GameLogic(
         setupGame()
     }
 
-     fun setupGame() { //a seconda che il round sia 1 o 2, la lista di immagini cambia
+     private fun setupGame() { //a seconda che il round sia 1 o 2, la lista di immagini cambia
         val images: MutableList<Int> = mutableListOf()
         if (round == 1) {
             images.addAll(listOf(
@@ -55,7 +55,7 @@ class GameLogic(
         images.addAll(images)// Raddoppio delle immagini per creare coppie
         images.shuffle() //mischio carte
         val tempCards = mutableListOf<MemoryCard>() //creo una lista temporanea per gestire l'inserimento delle carte
-        for (index in images.indices) {
+        for (index in 0 until numberOfCards) {
             tempCards.add(MemoryCard(images[index]))
         }
         cards = tempCards
