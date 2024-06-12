@@ -2,7 +2,11 @@ package com.example.matchgame.telemetry
 
 import android.app.ActivityManager
 import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
+import android.os.BatteryManager
 import android.os.Bundle
+import android.util.Log
 import com.google.firebase.analytics.FirebaseAnalytics
 
 
@@ -26,7 +30,7 @@ object DataCollector {
 
     private fun logEvent(eventName: String, params: Bundle? = null) {
         ensureInitialized()
-        //firebaseAnalytics.logEvent(eventName, params)
+        firebaseAnalytics.logEvent(eventName, params)
     }
 
     fun logGameStart() {
@@ -70,14 +74,6 @@ object DataCollector {
         logEvent("number_of_attempts", bundle)
     }
 
-    //Log when a user exits a game before completion.
-    //Provides insights into user drop-off points.
-    fun logGameAbandonment(level: Int) {
-        val bundle = Bundle().apply {
-            putInt("level", level)
-        }
-        logEvent("game_abandonment", bundle)
-    }
 
     //Track clicks on various buttons like menu buttons, retry, next level, etc.
     //Useful for UI/UX analysis.
@@ -123,12 +119,13 @@ object DataCollector {
         return memoryInfo
     }
 
-    fun logGameDuration(durationSeconds: Long) {
+    fun logTotalGameDuration(totalTimeSeconds: Long) {
         val bundle = Bundle().apply {
-            putLong("game_duration_seconds", durationSeconds)
+            putLong("total_game_duration", totalTimeSeconds)
         }
-        logEvent("game_duration", bundle)
+        logEvent("total_game_duration", bundle)
     }
+
 
     private fun ensureInitialized(){
         if(!::firebaseAnalytics.isInitialized){
@@ -136,5 +133,35 @@ object DataCollector {
         }
     }
 
-    // Add more telemetry functions as needed, bitch
+    fun getBatteryPercentage(context: Context): Int {
+        val intentFilter = IntentFilter(Intent.ACTION_BATTERY_CHANGED)
+        val batteryStatus = context.registerReceiver(null, intentFilter)
+        val level = batteryStatus?.getIntExtra(BatteryManager.EXTRA_LEVEL, -1) ?: -1
+        val scale = batteryStatus?.getIntExtra(BatteryManager.EXTRA_SCALE, -1) ?: -1
+        val batteryPercentage = (level / scale.toFloat() * 100).toInt()
+        Log.d("DataCollector", "Battery percentage: $batteryPercentage%")
+        return batteryPercentage
+    }
+
+
+    fun logBatteryUsage(initialBatteryPercentage: Int, endBatteryPercentage: Int) {
+        val bundle = Bundle().apply {
+            putInt("initial_battery_percentage", initialBatteryPercentage)
+            putInt("end_battery_percentage", endBatteryPercentage)
+            putInt("battery_usage_difference", initialBatteryPercentage - endBatteryPercentage)
+        }
+        Log.d("DataCollector", "Logging battery usage: Initial: $initialBatteryPercentage%, End: $endBatteryPercentage%, Difference: ${initialBatteryPercentage - endBatteryPercentage}%")
+        logEvent("battery_usage", bundle)
+    }
+
+    //Log when a user exits a game before completion.
+    //Provides insights into user drop-off points.
+    fun logGameAbandonment(round: Int) {
+        val bundle = Bundle().apply {
+            putInt("abandoned_round", round)
+        }
+        Log.d("DataCollector", "Logging game abandonment in round $round")
+        logEvent("game_abandonment", bundle)
+    }
+
 }

@@ -19,8 +19,14 @@ import com.example.matchgame.models.MemoryCard
 import com.example.matchgame.adapter.CardAdapter
 import com.example.matchgame.telemetry.DataCollector
 import androidx.navigation.fragment.findNavController
+import com.example.matchgame.MainActivity
 
 abstract class BaseRoundFragment : Fragment() {
+
+    companion object {
+        var gameStartTime: Long = 0
+    }
+
 
     protected lateinit var gameLogic: GameLogic
     protected lateinit var cardAdapter: CardAdapter
@@ -38,12 +44,20 @@ abstract class BaseRoundFragment : Fragment() {
         return try {
             // Inflate the layout for this fragment
             val view = inflater.inflate(getLayoutId(), container, false)
-            startTime = System.currentTimeMillis() // Record the start time
+
+            startTime = System.currentTimeMillis() // Record the start time of the game
+
+            if (getLevel() == 1) {
+                gameStartTime = startTime // Initialize game start time at the beginning of round 1
+            }
 
             recyclerView = view.findViewById(R.id.recyclerView_round)
             setupRecyclerView()
             cardAdapter = CardAdapter(mutableListOf(), this::onCardClicked)
             recyclerView.adapter = cardAdapter
+
+            // Update current round in MainActivity
+            (activity as? MainActivity)?.updateCurrentRound(getLevel())
 
             view
         } catch (e: Exception) {
@@ -80,7 +94,6 @@ abstract class BaseRoundFragment : Fragment() {
 
     protected fun updateViews(cards: List<MemoryCard>) { //delego l'aggiornamento delle carte alla classe Adapter
         try {
-
             cardAdapter.updateCards(cards)
         } catch (e: Exception) {
             DataCollector.logError("Errore durante updateViews di BaseRoundFragment: ${e.message}")
@@ -105,8 +118,14 @@ abstract class BaseRoundFragment : Fragment() {
             val endTime = System.currentTimeMillis()
             val durationSeconds = (endTime - startTime) / 1000 // Convert milliseconds to seconds
             DataCollector.logLevelCompletionTime(getLevel(), durationSeconds) // Log level completion time
-            //isGameCompleted = true // Set the game as completed
+            Log.d("BaseRoundFragment", "onAllCardsMatched called")
+            isGameCompleted = true // Set the game as completed
 
+
+            /*if (getNextRoundFragment() == R.id.youWinFragment) {
+                val totalGameDuration = (endTime - gameStartTime) / 1000 // Convert milliseconds to seconds
+                DataCollector.logTotalGameDuration(totalGameDuration)
+            }*/
 
         } catch (e: Exception) {
             DataCollector.logError("Errore durante onAllCardsMatched di BaseRoundFragment: ${e.message}")
@@ -145,7 +164,7 @@ abstract class BaseRoundFragment : Fragment() {
         }
     }
 
-    override fun onPause() {
+    /*override fun onPause() {
         super.onPause()
         if (!isGameCompleted) {
             try {
@@ -154,7 +173,7 @@ abstract class BaseRoundFragment : Fragment() {
                 DataCollector.logError("Errore durante onPause di BaseRoundFragment: ${e.message}")
             }
         }
-    }
+    }*/
 
     override fun onSaveInstanceState(savedState: Bundle) {
         super.onSaveInstanceState(savedState)

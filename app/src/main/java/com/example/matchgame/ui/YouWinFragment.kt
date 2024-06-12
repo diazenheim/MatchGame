@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
 import androidx.fragment.app.Fragment
+import com.example.matchgame.MainActivity
 import com.example.matchgame.R
 import com.example.matchgame.telemetry.DataCollector
 
@@ -21,9 +22,26 @@ class YouWinFragment : Fragment() {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.youwin_layout, container, false)
 
+        // Mark the game as completed
+        (activity as? MainActivity)?.onGameCompleted()
+
         DataCollector.logGameEnd("win")
+
+        logTotalGameDuration()
+
         return view
     }
+
+    private fun logTotalGameDuration() {
+        try {
+            val endTime = System.currentTimeMillis()
+            val totalGameDuration = (endTime - BaseRoundFragment.gameStartTime) / 1000 // Convert milliseconds to seconds
+            DataCollector.logTotalGameDuration(totalGameDuration) // Log total game duration
+        } catch (e: Exception) {
+            DataCollector.logError("Errore durante logTotalGameDuration di YouWinFragment: ${e.message}")
+        }
+    }
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

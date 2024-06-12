@@ -2,6 +2,7 @@ package com.example.matchgame
 
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
@@ -11,53 +12,56 @@ import com.example.matchgame.ui.HomeFragment
 import com.google.firebase.FirebaseApp
 import com.google.firebase.analytics.FirebaseAnalytics
 import androidx.navigation.ui.setupActionBarWithNavController
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+
 
 // The main entry point of the app, responsible for loading the fragment that contains the game UI
 class MainActivity : AppCompatActivity() {
-    private lateinit var playModeButton: ImageView
-    private lateinit var firebaseAnalytics: FirebaseAnalytics
 
+    private lateinit var firebaseAnalytics: FirebaseAnalytics
     private lateinit var navController: NavController
+    private var initialBatteryPercentage: Int = 0
+    private var isGameCompleted: Boolean = false // Flag to track game completion
+    private var currentRound: Int = 0 // Variable to track current round
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
+
         FirebaseApp.initializeApp(this)
+
         setContentView(R.layout.activity_main)
+
         firebaseAnalytics = FirebaseAnalytics.getInstance(this)
 
+        // Initialize DataCollector
         DataCollector.initialize(this)
 
-
-        //try{
-
-            // Initialize Firebase
-
-
-            // Initialize Firebase Analytics
+        // Capture the initial battery percentage
+        initialBatteryPercentage = DataCollector.getBatteryPercentage(this)
+        Log.d("MainActivity", "Initial battery percentage: $initialBatteryPercentage%")
 
 
-            //intialize navigation trough nav_graph
-            val navHostFragment= supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
-            navController = navHostFragment.navController
-            //setupActionBarWithNavController(navController)
+        //intialize navigation trough nav_graph
+        val navHostFragment =
+            supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+        navController = navHostFragment.navController
 
 
-            // Log a test event to verify that events are being logged
-            logTestEvent()
+        // Log a test event to verify that events are being logged
+        //logTestEvent()
 
-            // Initialize DataCollector
-            DataCollector.initialize(this)
 
-            // Set user properties
-            setUserProperties()
+        // Set user properties
+        setUserProperties()
 
-            // Log RAM usage
-            DataCollector.logRAMUsage()
+        // Log RAM usage
+        DataCollector.logRAMUsage()
 
-        /*} catch (e: Exception) {
-            DataCollector.logError("Errore durante l'inizializzazionedell'attività: ${e.message}")
-        }*/
     }
+
     private fun setUserProperties() {
         try {
             // Track device type
@@ -67,8 +71,7 @@ class MainActivity : AppCompatActivity() {
             // Track OS version
             val osVersion = Build.VERSION.RELEASE
             DataCollector.setUserProperty("os_version", osVersion)
-        }
-        catch(e:Exception){
+        } catch (e: Exception) {
             DataCollector.logError("Errore durante l'impostazione dell'utente: ${e.message}")
         }
     }
@@ -80,8 +83,7 @@ class MainActivity : AppCompatActivity() {
                 putString("custom_param", "test_event")
             }
             firebaseAnalytics.logEvent("test_event", bundle)
-        }
-        catch(e: Exception){
+        } catch (e: Exception) {
             DataCollector.logError("Errore durante l'evento di test: ${e.message}")
         }
     }
@@ -90,4 +92,27 @@ class MainActivity : AppCompatActivity() {
 
         return navController.navigateUp() || super.onSupportNavigateUp()
     }
+
+
+
+    // Add a method to log battery usage difference
+    override fun onStop() {
+        super.onStop()
+        Log.d("MainActivity", "onStop called")
+        val endBatteryPercentage = DataCollector.getBatteryPercentage(this)
+        Log.d("MainActivity", "End battery percentage: $endBatteryPercentage%")
+        DataCollector.logBatteryUsage(initialBatteryPercentage, endBatteryPercentage)
+    }
+
+
+    // Call this method when the game is completed
+    fun onGameCompleted() {
+        isGameCompleted = true
+    }
+
+    // Call this method to update the current round
+    fun updateCurrentRound(round: Int) {
+        currentRound = round
+    }
+
 }

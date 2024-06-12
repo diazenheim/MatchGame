@@ -31,7 +31,7 @@ class Round1Fragment : BaseRoundFragment() {
     }
 
     override fun getTimerDuration(): Long {
-        return 45000 // 45 seconds
+        return 30000 // 30 seconds
     }
 
     override fun onCardClicked(position: Int) {
@@ -41,14 +41,9 @@ class Round1Fragment : BaseRoundFragment() {
     override fun onAllCardsMatched() {
         super.onAllCardsMatched()
 
-                // Visualizziamo il fragment: YouLoseFragment
+        // Visualizziamo il fragment: YouLoseFragment
         Log.d("Round1Fragment","Errore a gogoo ")
-                findNavController().navigate(R.id.action_round1Fragment_to_round2Fragment)
-
-
-
-
+        findNavController().navigate(R.id.action_round1Fragment_to_round2Fragment)
     }
-
 
 }

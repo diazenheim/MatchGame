@@ -1,6 +1,7 @@
 package com.example.matchgame.logic
 
 import android.os.Bundle
+import android.util.Log
 import com.example.matchgame.R
 import com.example.matchgame.models.MemoryCard
 import com.example.matchgame.telemetry.DataCollector
@@ -144,8 +145,8 @@ class GameLogic(
             }
         }
         if (allMatched) {
+            Log.d("GameLogic", "All cards matched, invoking callback")
             onAllCardsMatchedCallback()
         }
     }
-    fun getCards(): List<MemoryCard> = cards
 }

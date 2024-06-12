@@ -43,7 +43,7 @@ class Round2Fragment : BaseRoundFragment() {
     }
 
     override fun getTimerDuration(): Long {
-        return 75000 // 75 seconds
+        return 60000 // 60 seconds
     }
 
     override fun onCardClicked(position: Int) {
