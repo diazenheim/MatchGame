@@ -37,6 +37,7 @@ abstract class BaseRoundFragment : Fragment() {
     protected var isGameCompleted: Boolean = false // Track if the game is completed
 
     private val buttonClickCounts = mutableMapOf<Int, Int>() // Counter for button clicks
+    private val buttonClickTimes = mutableListOf<Long>() // List to store button click times
 
 
     override fun onCreateView(
@@ -201,12 +202,27 @@ abstract class BaseRoundFragment : Fragment() {
     protected fun logButtonClick(buttonIndex: Int) {
         val buttonIndexOneBased = buttonIndex + 1
         buttonClickCounts[buttonIndexOneBased] = buttonClickCounts.getOrDefault(buttonIndexOneBased, 0) + 1
+        buttonClickTimes.add(System.currentTimeMillis()) // Add the current time to the list
         Log.d("BaseRoundFragment", "Button $buttonIndexOneBased clicked, current count: ${buttonClickCounts[buttonIndexOneBased]}") // Log for debugging
     }
 
     private fun sendButtonClickDataToFirebase() {
         Log.d("BaseRoundFragment", "Button click counts: $buttonClickCounts") // Log for debugging
         DataCollector.logButtonClickCounts(getLevel(), buttonClickCounts)
+        logAverageTimeBetweenClicks()
+    }
+
+    private fun logAverageTimeBetweenClicks() {
+        if (buttonClickTimes.size > 1) {
+            var totalTime: Long = 0
+            for (i in 1 until buttonClickTimes.size) {
+                totalTime += buttonClickTimes[i] - buttonClickTimes[i - 1]
+            }
+            val averageTime = totalTime / (buttonClickTimes.size - 1)
+            val averageTimeInSeconds = averageTime / 1000.0
+            DataCollector.logAverageTimeBetweenClicks(getLevel(), averageTimeInSeconds)
+            Log.d("BaseRoundFragment", "Average time between clicks: $averageTimeInSeconds seconds") // Log for debugging
+        }
     }
 
 }

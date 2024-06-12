@@ -26,6 +26,14 @@ class MainActivity : AppCompatActivity() {
     private var isGameCompleted: Boolean = false // Flag to track game completion
     private var currentRound: Int = 0 // Variable to track current round
 
+    //private var isPotentiallyClosing: Boolean = false // Flag to track potential closing
+
+
+    // Companion object to store the app start time
+    companion object {
+        var appStartTime: Long = System.currentTimeMillis()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
@@ -59,6 +67,10 @@ class MainActivity : AppCompatActivity() {
 
         // Log RAM usage
         DataCollector.logRAMUsage()
+
+        // Log the time taken to launch the app
+        val launchTime = (System.currentTimeMillis() - appStartTime) / 1000.0
+        DataCollector.logAppLaunchTime(launchTime)
 
     }
 
@@ -103,6 +115,7 @@ class MainActivity : AppCompatActivity() {
         Log.d("MainActivity", "End battery percentage: $endBatteryPercentage%")
         DataCollector.logBatteryUsage(initialBatteryPercentage, endBatteryPercentage)
     }
+
 
 
     // Call this method when the game is completed

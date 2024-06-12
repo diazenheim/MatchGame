@@ -160,9 +160,10 @@ object DataCollector {
         val bundle = Bundle().apply {
             putInt("abandoned_round", round)
         }
-        Log.d("DataCollector", "Logging game abandonment in round $round")
         logEvent("game_abandonment", bundle)
+        Log.d("DataCollector", "Logging game abandonment at round $round")
     }
+
 
     fun logButtonClickCounts(level: Int, buttonClickCounts: Map<Int, Int>) {
         val params = Bundle().apply {
@@ -172,5 +173,23 @@ object DataCollector {
         }
         logEvent("round${level}_button_clicks", params)
     }
+
+
+    //Logs the launch time to Firebase
+    fun logAppLaunchTime(launchTime: Double) {
+        val bundle = Bundle().apply {
+            putDouble("app_launch_time_seconds", launchTime)
+        }
+        logEvent("app_launch_time", bundle)
+    }
+
+    // Method to log the average time between card flips
+    fun logAverageTimeBetweenClicks(level: Int, averageTime: Double) {
+        val bundle = Bundle().apply {
+            putDouble("average_time_between_clicks_seconds", averageTime)
+        }
+        logEvent("round${level}_average_time_between_clicks", bundle)
+    }
+
 
 }
