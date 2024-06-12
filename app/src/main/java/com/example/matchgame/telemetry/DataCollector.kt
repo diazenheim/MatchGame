@@ -164,4 +164,13 @@ object DataCollector {
         logEvent("game_abandonment", bundle)
     }
 
+    fun logButtonClickCounts(level: Int, buttonClickCounts: Map<Int, Int>) {
+        val params = Bundle().apply {
+            buttonClickCounts.forEach { (buttonIndex, clickCount) ->
+                putInt("button_${buttonIndex}_clicks", clickCount)
+            }
+        }
+        logEvent("round${level}_button_clicks", params)
+    }
+
 }

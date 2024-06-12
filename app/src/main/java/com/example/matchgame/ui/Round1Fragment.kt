@@ -35,6 +35,7 @@ class Round1Fragment : BaseRoundFragment() {
     }
 
     override fun onCardClicked(position: Int) {
+        logButtonClick(position) // Log the button click
         gameLogic.onCardClicked(position)
     }
 

@@ -19,7 +19,6 @@ import com.example.matchgame.models.MemoryCard
 import com.example.matchgame.adapter.CardAdapter
 import com.example.matchgame.telemetry.DataCollector
 import androidx.navigation.fragment.findNavController
-import com.example.matchgame.MainActivity
 
 abstract class BaseRoundFragment : Fragment() {
 
@@ -36,6 +35,9 @@ abstract class BaseRoundFragment : Fragment() {
     protected var timeRemaining: Long = 0 // Initialize with 0, will be set in onViewCreated
     protected var startTime: Long = 0 // Variable to store start time
     protected var isGameCompleted: Boolean = false // Track if the game is completed
+
+    private val buttonClickCounts = mutableMapOf<Int, Int>() // Counter for button clicks
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -55,9 +57,6 @@ abstract class BaseRoundFragment : Fragment() {
             setupRecyclerView()
             cardAdapter = CardAdapter(mutableListOf(), this::onCardClicked)
             recyclerView.adapter = cardAdapter
-
-            // Update current round in MainActivity
-            (activity as? MainActivity)?.updateCurrentRound(getLevel())
 
             view
         } catch (e: Exception) {
@@ -87,6 +86,9 @@ abstract class BaseRoundFragment : Fragment() {
         super.onDestroyView()
         try {
             timer.cancel() // Cancella il timer per evitare memory leaks
+
+            sendButtonClickDataToFirebase()
+
         } catch (e: Exception) {
             DataCollector.logError("Errore durante onDestroyView di BaseRoundFragment: ${e.message}")
         }
@@ -196,5 +198,15 @@ abstract class BaseRoundFragment : Fragment() {
     abstract fun onCardClicked(position: Int)
     abstract fun getTimerDuration(): Long // Abstract method for timer duration
 
+    protected fun logButtonClick(buttonIndex: Int) {
+        val buttonIndexOneBased = buttonIndex + 1
+        buttonClickCounts[buttonIndexOneBased] = buttonClickCounts.getOrDefault(buttonIndexOneBased, 0) + 1
+        Log.d("BaseRoundFragment", "Button $buttonIndexOneBased clicked, current count: ${buttonClickCounts[buttonIndexOneBased]}") // Log for debugging
+    }
+
+    private fun sendButtonClickDataToFirebase() {
+        Log.d("BaseRoundFragment", "Button click counts: $buttonClickCounts") // Log for debugging
+        DataCollector.logButtonClickCounts(getLevel(), buttonClickCounts)
+    }
 
 }
