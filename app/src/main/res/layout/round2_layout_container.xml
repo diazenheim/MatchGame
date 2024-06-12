@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:ignore="ExtraText">
+
     <include
         android:id="@+id/round2_layout"
         layout="@layout/round2_layout"
@@ -14,6 +15,6 @@
     <FrameLayout
         android:id="@+id/fragment_round2_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        />
+        android:layout_height="match_parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

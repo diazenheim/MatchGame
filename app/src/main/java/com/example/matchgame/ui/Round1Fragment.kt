@@ -30,6 +30,10 @@ class Round1Fragment : BaseRoundFragment() {
         return 8 // Specifica il numero di carte per il round 2
     }
 
+    override fun getTimerDuration(): Long {
+        return 45000 // 45 seconds
+    }
+
     override fun onCardClicked(position: Int) {
         gameLogic.onCardClicked(position)
     }

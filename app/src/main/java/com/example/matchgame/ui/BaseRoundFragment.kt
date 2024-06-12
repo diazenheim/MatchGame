@@ -27,7 +27,7 @@ abstract class BaseRoundFragment : Fragment() {
     protected lateinit var recyclerView: RecyclerView
     protected var isGameLogicInitialized = false
     protected lateinit var timer: CountDownTimer
-    protected var timeRemaining: Long = 30000 // Default time, override in specific round fragments
+    protected var timeRemaining: Long = 0 // Initialize with 0, will be set in onViewCreated
     protected var startTime: Long = 0 // Variable to store start time
     protected var isGameCompleted: Boolean = false // Track if the game is completed
 
@@ -57,6 +57,7 @@ abstract class BaseRoundFragment : Fragment() {
         try {
             gameLogic = createGameLogic()
             isGameLogicInitialized = true
+            timeRemaining = getTimerDuration() // Set the timeRemaining to the correct duration for the round
             savedInstanceState?.let {
                 gameLogic.restoreState(it)
                 timeRemaining = it.getLong("timeRemaining", timeRemaining) // Restore the timer state
@@ -174,5 +175,7 @@ abstract class BaseRoundFragment : Fragment() {
     abstract fun getNextRoundFragment(): Int
     abstract fun getNumberOfCards(): Int
     abstract fun onCardClicked(position: Int)
+    abstract fun getTimerDuration(): Long // Abstract method for timer duration
+
 
 }
