@@ -3,12 +3,13 @@ package com.example.matchgame.adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
 import android.widget.ImageButton
 import androidx.recyclerview.widget.RecyclerView
 import com.example.matchgame.R
 import com.example.matchgame.models.MemoryCard
 
-//gestisce la logica per la visualizzazione delle carte nella RecyclerView usata per il secondo round
+// Manages the logic for displaying the cards in the RecyclerView used for the second round
 class CardAdapter(
     private var cards: List<MemoryCard>,
     private val cardClickListener: (Int) -> Unit
@@ -33,13 +34,23 @@ class CardAdapter(
 
     class CardViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) { //CardViewHolder contiene la logica per visualizzare e aggiornare una singola carta.
         private val imageButton: ImageButton = itemView.findViewById(R.id.imgbtn)
+        private val frameLayout: FrameLayout = itemView.findViewById(R.id.frame_layout)
 
-        fun bind(card: MemoryCard, cardClickListener: (Int) -> Unit) { //associa i dati della MemoryCard alla vista
-            if (card.isFaceUp) imageButton.setImageResource(card.identifier)
-            else imageButton.setImageResource(R.drawable.card_down)
-            if(card.isMatched) imageButton.alpha = 0.1f
-            else imageButton.alpha = 1.0f
-            imageButton.setOnClickListener { cardClickListener(adapterPosition) }// Imposta il listener per il click, che chiamerà la callback con la posizione della carta
+
+        fun bind(card: MemoryCard, cardClickListener: (Int) -> Unit) { // Associates the MemoryCard data with the view
+            if (card.isFaceUp) {
+                imageButton.setImageResource(card.identifier)
+            } else {
+                imageButton.setImageResource(R.drawable.card_down)
+            }
+
+            if (card.isMatched) {
+                frameLayout.alpha = 0.1f // Set higher transparency for matched cards
+            } else {
+                frameLayout.alpha = 1.0f
+            }
+
+            imageButton.setOnClickListener { cardClickListener(adapterPosition) } // Sets the click listener, which will call the callback with the card's position
         }
     }
 }
