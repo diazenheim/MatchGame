@@ -1,5 +1,7 @@
 package com.example.matchgame
 
+import android.Manifest
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -15,10 +17,17 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import android.content.pm.PackageManager
+import android.net.Uri
+import androidx.appcompat.app.AlertDialog
+import android.provider.Settings
 
 
 // The main entry point of the app, responsible for loading the fragment that contains the game UI
 class MainActivity : AppCompatActivity() {
+
 
     private lateinit var firebaseAnalytics: FirebaseAnalytics
     private lateinit var navController: NavController
@@ -26,12 +35,14 @@ class MainActivity : AppCompatActivity() {
     private var isGameCompleted: Boolean = false // Flag to track game completion
     private var currentRound: Int = 0 // Variable to track current round
 
+
     //private var isPotentiallyClosing: Boolean = false // Flag to track potential closing
 
 
     // Companion object to store the app start time
     companion object {
         var appStartTime: Long = System.currentTimeMillis()
+        private const val PERMISSION_REQUEST_CODE = 1
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -62,6 +73,9 @@ class MainActivity : AppCompatActivity() {
         //logTestEvent()
 
 
+        //Ask permission
+        checkAndRequestPermissions()
+
         // Set user properties
         setUserProperties()
 
@@ -71,6 +85,8 @@ class MainActivity : AppCompatActivity() {
         // Log the time taken to launch the app
         val launchTime = (System.currentTimeMillis() - appStartTime) / 1000.0
         DataCollector.logAppLaunchTime(launchTime)
+        //DataCollector.logInternNetworkState()
+        //DataCollector.logInternetVelocity()
 
     }
 
@@ -128,4 +144,109 @@ class MainActivity : AppCompatActivity() {
         currentRound = round
     }
 
+    private fun checkAndRequestPermissions() {
+        val permissionsNeeded = mutableListOf<String>()
+
+        /*if (ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            permissionsNeeded.add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        }
+         if (ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.READ_EXTERNAL_STORAGE
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            permissionsNeeded.add(Manifest.permission.READ_EXTERNAL_STORAGE)
+        }
+
+         */
+
+        if (ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.INTERNET
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            permissionsNeeded.add(Manifest.permission.INTERNET)
+        }
+
+
+        if (ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_NETWORK_STATE
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            permissionsNeeded.add(Manifest.permission.ACCESS_NETWORK_STATE)
+        }
+
+        if (ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.POST_NOTIFICATIONS
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            permissionsNeeded.add(Manifest.permission.POST_NOTIFICATIONS)
+        }
+        // Aggiungi altri permessi se necessario
+
+        if (permissionsNeeded.isNotEmpty()) {
+            ActivityCompat.requestPermissions(
+                this,
+                permissionsNeeded.toTypedArray(),
+                PERMISSION_REQUEST_CODE
+            )
+        }
+    }
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == PERMISSION_REQUEST_CODE) {
+            for (i in permissions.indices) {
+                if (grantResults[i] != PackageManager.PERMISSION_GRANTED) {
+                    Log.d("MainActivityPErmission", "Permesso richiesto, godo")
+                    // Il permesso non è stato concesso, gestisci di conseguenza
+                    when (permissions[i]) {
+                        /*Manifest.permission.WRITE_EXTERNAL_STORAGE -> {
+                            showPermissionDeniedDialog("Write External Storage permission is required to save game data. Please enable it in settings.")
+                        }
+
+                        Manifest.permission.READ_EXTERNAL_STORAGE -> {
+                            showPermissionDeniedDialog("Read External Storage permission is required to read game data. Please enable it in settings.")
+                        }*/
+
+                        Manifest.permission.POST_NOTIFICATIONS -> {
+                            showPermissionDeniedDialog("Notification permission is required to receive notifications. Please enable it in settings.")
+                        }
+
+                        Manifest.permission.INTERNET -> {
+                            showPermissionDeniedDialog("Notification permission is required to receive notifications. Please enable it in settings.")
+                        }
+
+                        Manifest.permission.ACCESS_NETWORK_STATE -> {
+                            showPermissionDeniedDialog("Notification permission is required to receive notifications. Please enable it in settings.")
+                        }
+                    }
+                }
+            }
+        }
+    }
+    private fun showPermissionDeniedDialog(message: String) {
+        AlertDialog.Builder(this)
+            .setTitle("Permission Required")
+            .setMessage(message)
+            .setPositiveButton("Settings") { dialog, _ ->
+                dialog.dismiss()
+                // Apri le impostazioni dell'app per permettere all'utente di concedere i permessi manualmente
+                val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                    data = Uri.fromParts("package", packageName, null)
+                }
+                startActivity(intent)
+            }
+            .setNegativeButton("Cancel") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .show()
+    }
 }
+
+

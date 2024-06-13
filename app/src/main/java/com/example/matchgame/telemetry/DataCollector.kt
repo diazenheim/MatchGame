@@ -183,6 +183,14 @@ object DataCollector {
         logEvent("app_launch_time", bundle)
     }
 
+    fun logClickPlayButtonTime(launchTime: Double) {
+        val bundle = Bundle().apply {
+            putDouble("click_play_button_seconds", launchTime)
+        }
+        logEvent("click_play_button", bundle)
+    }
+
+
     // Method to log the average time between card flips
     fun logAverageTimeBetweenClicks(level: Int, averageTime: Double) {
         val bundle = Bundle().apply {
