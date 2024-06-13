@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.matchgame.R
 import com.example.matchgame.models.MemoryCard
 
-//gestisce la logica per la visualizzazione delle carte nella RecyclerView usata per il secondo round
+// Manages the logic for displaying the cards in the RecyclerView used for the second round
 class CardAdapter(
     private var cards: List<MemoryCard>,
     private val cardClickListener: (Int) -> Unit

@@ -103,18 +103,16 @@ abstract class BaseRoundFragment : Fragment() {
         }
     }
 
-    protected fun setupRecyclerView() { //a seconda che l'orientamento è portrait o landscape, lo scrolling nella RecycleView sarà orizzontale o verticale
+    protected fun setupRecyclerView() {
         try {
             val orientation = resources.configuration.orientation
-            recyclerView.layoutManager = if (orientation == Configuration.ORIENTATION_PORTRAIT) {
-                GridLayoutManager(context, 2, GridLayoutManager.VERTICAL, false)
-            } else {
-                GridLayoutManager(context, 4, GridLayoutManager.VERTICAL, false)
-            }
+            val spanCount = if (orientation == Configuration.ORIENTATION_PORTRAIT) 2 else 4 // Adjust based on your design
+            recyclerView.layoutManager = GridLayoutManager(context, spanCount, GridLayoutManager.VERTICAL, false)
         } catch (e: Exception) {
             DataCollector.logError("Errore durante setupRecyclerView di BaseRoundFragment: ${e.message}")
         }
     }
+
 
     protected open fun onAllCardsMatched() { //quando tutte carte sono matchate avviato il fragment relativo al round successivo
         try {
