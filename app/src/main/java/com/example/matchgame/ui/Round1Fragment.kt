@@ -1,12 +1,9 @@
 package com.example.matchgame.ui
 
 
-import android.util.Log
 import com.example.matchgame.R
-import com.example.matchgame.logic.GameLogic
-import com.example.matchgame.models.MemoryCard
-import com.example.matchgame.telemetry.DataCollector
 import androidx.navigation.fragment.findNavController
+import com.example.matchgame.logic.GameLogic
 
 class Round1Fragment : BaseRoundFragment() {
     override fun createGameLogic(): GameLogic {
@@ -43,7 +40,6 @@ class Round1Fragment : BaseRoundFragment() {
         super.onAllCardsMatched()
 
         // Visualizziamo il fragment: YouLoseFragment
-        Log.d("Round1Fragment","Errore a gogoo ")
         findNavController().navigate(R.id.action_round1Fragment_to_round2Fragment)
     }
 

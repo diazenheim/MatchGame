@@ -14,6 +14,10 @@
         <action
             android:id="@+id/action_homeFragment_to_round1Fragment"
             app:destination="@id/round1Fragment" />
+
+        <action
+            android:id="@+id/action_homeFragment_to_multiplayerFragment"
+            app:destination="@id/multiplayerFragment"/>
     </fragment>
 
     <fragment
@@ -68,4 +72,31 @@
         android:label="Win Layout"
         tools:layout="@layout/youwin_layout"
         />
+
+
+    <fragment
+        android:id="@+id/multiplayerFragment"
+        android:name="com.example.matchgame.ui.MultiplayerFragment"
+        android:label="Multiplayer"
+        tools:layout="@layout/multiplayer_layout">
+        <action
+            android:id="@+id/action_multiplayerFragment_to_player1WinFragment"
+            app:destination="@id/player1WinFragment" />
+        <action
+            android:id="@+id/action_multiplayerFragment_to_player2WinFragment"
+            app:destination="@id/player2WinFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/player1WinFragment"
+        android:name="com.example.matchgame.ui.Player1WinFragment"
+        android:label="Player 1 Wins"
+        tools:layout="@layout/player1wins_layout"/>
+
+    <fragment
+        android:id="@+id/player2WinFragment"
+        android:name="com.example.matchgame.ui.Player2WinFragment"
+        android:label="Player 2 Wins"
+        tools:layout="@layout/player2win_layout"/>
+
 </navigation>

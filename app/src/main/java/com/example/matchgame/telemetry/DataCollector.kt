@@ -31,6 +31,7 @@ object DataCollector {
     private fun logEvent(eventName: String, params: Bundle? = null) {
         ensureInitialized()
         firebaseAnalytics.logEvent(eventName, params)
+        Log.d("DataCollector", "sent data to firebase console")
     }
 
     fun logGameStart() {

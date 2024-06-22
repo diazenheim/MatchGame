@@ -1,24 +1,9 @@
 package com.example.matchgame.ui
 
-import android.content.ContentValues
-import android.content.res.Configuration
-import android.os.Bundle
-import android.os.CountDownTimer
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.widget.TextView
-import android.widget.Toast
-import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.example.matchgame.R
-import com.example.matchgame.logic.GameLogic
-import com.example.matchgame.models.MemoryCard
-import com.example.matchgame.adapter.CardAdapter
-import com.example.matchgame.telemetry.DataCollector
 import androidx.navigation.fragment.findNavController
+import com.example.matchgame.logic.GameLogic
 
 class Round2Fragment : BaseRoundFragment() {
     override fun createGameLogic(): GameLogic {

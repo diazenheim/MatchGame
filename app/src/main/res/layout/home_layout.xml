@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/pokemon_background_portrait"
+    android:background="@drawable/background_portrait"
     android:gravity="center"
     android:id="@+id/nav_host_fragment"
     app:defaultNavHost="true"
@@ -18,16 +18,33 @@
         android:layout_width="184dp"
         android:layout_height="173dp"
         android:layout_gravity="center"
-        android:background="@null"
         android:alpha="0.9"
+        android:background="@null"
         android:contentDescription="Play button"
         android:scaleType="centerInside"
-        android:src="@drawable/playbuttonicon"
+        android:src="@drawable/single_button"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHorizontal_bias="0.50"
+        app:layout_constraintHorizontal_bias="0.07"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.8" />
+        app:layout_constraintVertical_bias="0.775" />
+
+    <ImageButton
+        android:id="@+id/play_multiplayer"
+        android:layout_width="184dp"
+        android:layout_height="173dp"
+        android:layout_gravity="center"
+        android:alpha="0.9"
+        android:background="@null"
+        android:contentDescription="Play button"
+        android:scaleType="centerInside"
+        android:src="@drawable/multi_button"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0.929"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.775" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

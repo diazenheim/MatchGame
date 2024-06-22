@@ -1,5 +1,6 @@
 package com.example.matchgame.adapter
 
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,7 +13,8 @@ import com.example.matchgame.models.MemoryCard
 // Manages the logic for displaying the cards in the RecyclerView used for the second round
 class CardAdapter(
     private var cards: List<MemoryCard>,
-    private val cardClickListener: (Int) -> Unit
+    private val cardClickListener: (Int) -> Unit,
+    private val getCurrentPlayer: (() -> Int)? = null // Function to get the current player
 ) : RecyclerView.Adapter<CardAdapter.CardViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CardViewHolder {
@@ -22,7 +24,8 @@ class CardAdapter(
 
     override fun onBindViewHolder(holder: CardViewHolder, position: Int) {
         val card = cards[position]
-        holder.bind(card, cardClickListener) //ottiene la carta alla posizione specificata e la passa al method bind
+        //holder.bind(card, cardClickListener) //ottiene la carta alla posizione specificata e la passa al method bind
+        holder.bind(card, cardClickListener, getCurrentPlayer) // Pass getCurrentPlayer to the bind method if available
     }
 
     override fun getItemCount() = cards.size //ritorna il numero di carte
@@ -33,11 +36,12 @@ class CardAdapter(
     }
 
     class CardViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) { //CardViewHolder contiene la logica per visualizzare e aggiornare una singola carta.
+
         private val imageButton: ImageButton = itemView.findViewById(R.id.imgbtn)
         private val frameLayout: FrameLayout = itemView.findViewById(R.id.frame_layout)
 
 
-        fun bind(card: MemoryCard, cardClickListener: (Int) -> Unit) { // Associates the MemoryCard data with the view
+        fun bind(card: MemoryCard, cardClickListener: (Int) -> Unit, getCurrentPlayer: (() -> Int)?) { // Associates the MemoryCard data with the view
             if (card.isFaceUp) {
                 imageButton.setImageResource(card.identifier)
             } else {
@@ -48,6 +52,13 @@ class CardAdapter(
                 frameLayout.alpha = 0.1f // Set higher transparency for matched cards
             } else {
                 frameLayout.alpha = 1.0f
+            }
+
+            // Set the frame color based on the current player if getCurrentPlayer is available
+            getCurrentPlayer?.let {
+                frameLayout.setBackgroundColor(
+                    if (it() == 1) Color.RED else Color.BLUE
+                )
             }
 
             imageButton.setOnClickListener { cardClickListener(adapterPosition) } // Sets the click listener, which will call the callback with the card's position

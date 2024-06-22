@@ -36,13 +36,24 @@ class HomeFragment : Fragment() {
             val startHomeFragmentTime: Long = System.currentTimeMillis()
             // Find the playModeButton in the layout
             val playModeButton: ImageButton = view.findViewById(R.id.play_button)
+            val playMultiplayerButton: ImageButton =view.findViewById(R.id.play_multiplayer)
             // Set the listener for the play button
             playModeButton.setOnClickListener {
                 try {
-                    findNavController().navigate(R.id.action_homeFragment_to_round1Fragment)
                     //Send how much time is used to click the playButton
                     val clickPlayButton = (System.currentTimeMillis() - startHomeFragmentTime) / 1000.0
                     DataCollector.logClickPlayButtonTime(clickPlayButton)
+                    findNavController().navigate(R.id.action_homeFragment_to_round1Fragment)
+                }catch(e: Exception){
+                    DataCollector.logError("Errore durante il click del playButton: ${e.message}")
+                }
+            }
+            playMultiplayerButton.setOnClickListener {
+                try {
+                    //Send how much time is used to click the playButton
+                    //val clickMultiplayerButton = (System.currentTimeMillis() - startHomeFragmentTime) / 1000.0
+                    //DataCollector.logClickPlayButtonTime(clickPlayButton)
+                    findNavController().navigate(R.id.action_homeFragment_to_multiplayerFragment)
                 }catch(e: Exception){
                     DataCollector.logError("Errore durante il click del playButton: ${e.message}")
                 }

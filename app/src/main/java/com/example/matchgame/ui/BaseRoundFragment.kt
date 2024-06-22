@@ -1,6 +1,5 @@
 package com.example.matchgame.ui
 
-import android.content.ContentValues
 import android.content.res.Configuration
 import android.os.Bundle
 import android.os.CountDownTimer
@@ -14,11 +13,11 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.matchgame.R
-import com.example.matchgame.logic.GameLogic
 import com.example.matchgame.models.MemoryCard
 import com.example.matchgame.adapter.CardAdapter
 import com.example.matchgame.telemetry.DataCollector
 import androidx.navigation.fragment.findNavController
+import com.example.matchgame.logic.GameLogic
 
 abstract class BaseRoundFragment : Fragment() {
 
@@ -56,7 +55,13 @@ abstract class BaseRoundFragment : Fragment() {
 
             recyclerView = view.findViewById(R.id.recyclerView_round)
             setupRecyclerView()
-            cardAdapter = CardAdapter(mutableListOf(), this::onCardClicked)
+
+            // Only pass getCurrentPlayer if this is a MultiplayerFragment
+            cardAdapter = if (this is MultiplayerFragment) {
+                CardAdapter(mutableListOf(), this::onCardClicked, (this as MultiplayerFragment)::getCurrentPlayer)
+            } else {
+                CardAdapter(mutableListOf(), this::onCardClicked)
+            }
             recyclerView.adapter = cardAdapter
 
             view
@@ -77,7 +82,14 @@ abstract class BaseRoundFragment : Fragment() {
                 timeRemaining = it.getLong("timeRemaining", timeRemaining) // Restore the timer state
             }
 
-            startTimer(timeRemaining)
+            if (this !is MultiplayerFragment) {
+                startTimer(timeRemaining)
+            } else {
+                // Hide timer TextView if timer is not used
+                val timerTextView: TextView? = view.findViewById(R.id.timerTextView)
+                timerTextView?.visibility = View.GONE
+            }
+
         } catch (e: Exception) {
             DataCollector.logError("Errore durante onViewCreated di BaseRoundFragment: ${e.message}")
         }
@@ -86,8 +98,9 @@ abstract class BaseRoundFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         try {
-            timer.cancel() // Cancella il timer per evitare memory leaks
-
+            if (this !is MultiplayerFragment) {
+                timer.cancel() // Cancella il timer per evitare memory leaks
+            }
             sendButtonClickDataToFirebase()
 
         } catch (e: Exception) {
