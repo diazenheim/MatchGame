@@ -8,7 +8,8 @@ import androidx.core.content.ContextCompat
 import com.example.matchgame.R
 import androidx.navigation.fragment.findNavController
 import com.example.matchgame.adapter.CardAdapter
-import com.example.matchgame.logic.GameLogic
+import com.example.matchgame.logic.IGameLogic
+import com.example.matchgame.logic.MultiplayerGameLogic
 
 class MultiplayerFragment : BaseRoundFragment() {
 
@@ -16,8 +17,8 @@ class MultiplayerFragment : BaseRoundFragment() {
     private var currentPlayer = 1
     private var flipsThisTurn = 0
 
-    override fun createGameLogic(): GameLogic {
-        return GameLogic(::updateViews, ::onAllCardsMatched, this::showToast, 0, getNumberOfCards(), this::getCurrentPlayer)
+    override fun createGameLogic(): IGameLogic {
+        return MultiplayerGameLogic(::updateViews, ::onAllCardsMatched, this::showToast, 0, getNumberOfCards(), this::getCurrentPlayer)
     }
 
     override fun getLayoutId(): Int {

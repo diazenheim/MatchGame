@@ -3,11 +3,12 @@ package com.example.matchgame.ui
 import android.util.Log
 import com.example.matchgame.R
 import androidx.navigation.fragment.findNavController
-import com.example.matchgame.logic.GameLogic
+import com.example.matchgame.logic.IGameLogic
+import com.example.matchgame.logic.SingleGameLogic
 
 class Round2Fragment : BaseRoundFragment() {
-    override fun createGameLogic(): GameLogic {
-        return GameLogic(::updateViews, ::onAllCardsMatched, this::showToast, 2, getNumberOfCards())
+    override fun createGameLogic(): IGameLogic {
+        return SingleGameLogic(::updateViews, ::onAllCardsMatched, this::showToast, 2, getNumberOfCards())
     }
 
     override fun getLayoutId(): Int {

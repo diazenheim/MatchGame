@@ -17,7 +17,7 @@ import com.example.matchgame.models.MemoryCard
 import com.example.matchgame.adapter.CardAdapter
 import com.example.matchgame.telemetry.DataCollector
 import androidx.navigation.fragment.findNavController
-import com.example.matchgame.logic.GameLogic
+import com.example.matchgame.logic.IGameLogic
 
 abstract class BaseRoundFragment : Fragment() {
 
@@ -26,7 +26,7 @@ abstract class BaseRoundFragment : Fragment() {
     }
 
 
-    protected lateinit var gameLogic: GameLogic
+    protected lateinit var gameLogic: IGameLogic
     protected lateinit var cardAdapter: CardAdapter
     protected lateinit var recyclerView: RecyclerView
     protected var isGameLogicInitialized = false
@@ -202,7 +202,7 @@ abstract class BaseRoundFragment : Fragment() {
         }
     }
 
-    abstract fun createGameLogic(): GameLogic
+    abstract fun createGameLogic(): IGameLogic
     abstract fun getLayoutId(): Int
     abstract fun getLevel(): Int
     abstract fun getNextRoundFragment(): Int
