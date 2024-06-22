@@ -8,7 +8,6 @@ class MultiplayerGameLogic(
     private val updateViewsCallback: (List<MemoryCard>) -> Unit,
     private val onAllCardsMatchedCallback: () -> Unit,
     private val ToastContextCallback: (String) -> Unit,
-    private var round: Int,
     private val numberOfCards: Int,
     private val currentPlayerProvider: () -> Int
 ) : IGameLogic {

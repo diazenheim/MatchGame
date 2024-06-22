@@ -18,7 +18,7 @@ class MultiplayerFragment : BaseRoundFragment() {
     private var flipsThisTurn = 0
 
     override fun createGameLogic(): IGameLogic {
-        return MultiplayerGameLogic(::updateViews, ::onAllCardsMatched, this::showToast, 0, getNumberOfCards(), this::getCurrentPlayer)
+        return MultiplayerGameLogic(::updateViews, ::onAllCardsMatched, this::showToast, getNumberOfCards(), this::getCurrentPlayer)
     }
 
     override fun getLayoutId(): Int {

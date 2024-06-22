@@ -51,6 +51,8 @@ abstract class BaseRoundFragment : Fragment() {
 
             if (getLevel() == 1) {
                 gameStartTime = startTime // Initialize game start time at the beginning of round 1
+            } else if (this is MultiplayerFragment && gameStartTime == 0L) {
+                gameStartTime = startTime // Initialize game start time at the beginning of multiplayer
             }
 
             recyclerView = view.findViewById(R.id.recyclerView_round)
@@ -131,8 +133,13 @@ abstract class BaseRoundFragment : Fragment() {
         try {
             val endTime = System.currentTimeMillis()
             val durationSeconds = (endTime - startTime) / 1000 // Convert milliseconds to seconds
-            DataCollector.logLevelCompletionTime(getLevel(), durationSeconds) // Log level completion time
-            Log.d("BaseRoundFragment", "onAllCardsMatched called")
+            //DataCollector.logLevelCompletionTime(getLevel(), durationSeconds) // Log level completion time
+            if (this is MultiplayerFragment) {
+                DataCollector.logMultiplayerCompletionTime(durationSeconds)
+            } else {
+                DataCollector.logLevelCompletionTime(getLevel(), durationSeconds)
+            }
+            Log.d("BaseRoundFragment", "onAllCardsMatched called, duration: ${durationSeconds}s")
             isGameCompleted = true // Set the game as completed
 
 
@@ -219,7 +226,11 @@ abstract class BaseRoundFragment : Fragment() {
 
     private fun sendButtonClickDataToFirebase() {
         Log.d("BaseRoundFragment", "Button click counts: $buttonClickCounts") // Log for debugging
-        DataCollector.logButtonClickCounts(getLevel(), buttonClickCounts)
+        if (this is MultiplayerFragment) {
+            DataCollector.logMultiplayerButtonClickCounts(buttonClickCounts)
+        } else {
+            DataCollector.logButtonClickCounts(getLevel(), buttonClickCounts)
+        }
         logAverageTimeBetweenClicks()
     }
 
@@ -231,7 +242,11 @@ abstract class BaseRoundFragment : Fragment() {
             }
             val averageTime = totalTime / (buttonClickTimes.size - 1)
             val averageTimeInSeconds = averageTime / 1000.0
-            DataCollector.logAverageTimeBetweenClicks(getLevel(), averageTimeInSeconds)
+            if (this is MultiplayerFragment) {
+                DataCollector.logMultiplayerAverageTimeBetweenClicks(averageTimeInSeconds)
+            } else {
+                DataCollector.logAverageTimeBetweenClicks(getLevel(), averageTimeInSeconds)
+            }
             Log.d("BaseRoundFragment", "Average time between clicks: $averageTimeInSeconds seconds") // Log for debugging
         }
     }

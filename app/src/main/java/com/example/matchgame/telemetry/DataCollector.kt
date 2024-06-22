@@ -201,4 +201,32 @@ object DataCollector {
     }
 
 
+    fun logMultiplayerCompletionTime(timeTakenSeconds: Long) {
+        val bundle = Bundle().apply {
+            putString("level", "multiplayer")
+            putLong("time_taken_seconds", timeTakenSeconds)
+        }
+        logEvent("multiplayer_level_completion_time", bundle)
+        Log.d("DataCollector", "Logged multiplayer_level_completion_time: level=multiplayer, time_taken_seconds=$timeTakenSeconds")
+    }
+
+    fun logMultiplayerButtonClickCounts(buttonClickCounts: Map<Int, Int>) {
+        val params = Bundle().apply {
+            buttonClickCounts.forEach { (buttonIndex, clickCount) ->
+                putInt("button_${buttonIndex}_clicks", clickCount)
+            }
+        }
+        logEvent("multiplayer_button_clicks", params)
+    }
+
+
+    fun logMultiplayerAverageTimeBetweenClicks(averageTime: Double) {
+        val bundle = Bundle().apply {
+            putDouble("average_time_between_clicks_seconds", averageTime)
+        }
+        logEvent("multiplayer_average_time_between_clicks", bundle)
+    }
+
+
+
 }
