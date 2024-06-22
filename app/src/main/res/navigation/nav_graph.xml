@@ -18,6 +18,14 @@
         <action
             android:id="@+id/action_homeFragment_to_multiplayerFragment"
             app:destination="@id/multiplayerFragment"/>
+
+        <action
+            android:id="@+id/action_homeFragment_to_aboutFragment"
+            app:destination="@id/aboutFragment" />
+
+        <action
+            android:id="@+id/action_homeFragment_to_infoFragment"
+            app:destination="@id/infoFragment" />
     </fragment>
 
     <fragment
@@ -97,6 +105,17 @@
         android:id="@+id/player2WinFragment"
         android:name="com.example.matchgame.ui.Player2WinFragment"
         android:label="Player 2 Wins"
-        tools:layout="@layout/player2win_layout"/>
+        tools:layout="@layout/player2wins_layout"/>
+
+    <fragment
+        android:id="@+id/aboutFragment"
+        android:name="com.example.matchgame.ui.AboutFragment"
+        android:label="About"
+        tools:layout="@layout/about_layout"/>
+    <fragment
+        android:id="@+id/infoFragment"
+        android:name="com.example.matchgame.ui.InfoFragment"
+        android:label="About"
+        tools:layout="@layout/info_layout"/>
 
 </navigation>

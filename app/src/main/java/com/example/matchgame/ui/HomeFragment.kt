@@ -10,7 +10,10 @@ import com.example.matchgame.R
 import com.example.matchgame.telemetry.DataCollector
 import androidx.navigation.fragment.findNavController
 import android.util.Log
+import android.view.ContextThemeWrapper
+import android.widget.PopupMenu
 import com.example.matchgame.MainActivity
+import com.google.android.material.snackbar.Snackbar
 
 class HomeFragment : Fragment() {
 
@@ -25,6 +28,7 @@ class HomeFragment : Fragment() {
             // Inflate the layout for this fragment
             val view = inflater.inflate(R.layout.home_layout, container, false)
 
+
             return view
 
     }
@@ -37,6 +41,7 @@ class HomeFragment : Fragment() {
             // Find the playModeButton in the layout
             val playModeButton: ImageButton = view.findViewById(R.id.play_button)
             val playMultiplayerButton: ImageButton =view.findViewById(R.id.play_multiplayer)
+            val menuButton: ImageButton = view.findViewById(R.id.menu)
             // Set the listener for the play button
             playModeButton.setOnClickListener {
                 try {
@@ -58,8 +63,52 @@ class HomeFragment : Fragment() {
                     DataCollector.logError("Errore durante il click del playButton: ${e.message}")
                 }
             }
+            menuButton.setOnClickListener {
+                try {
+                    showPopupMenu(it)
+                }
+                catch(e: Exception){
+                    DataCollector.logError("Errore durante il click del playButton: ${e.message}")
+                }
+            }
         } catch (e: Exception) {
             DataCollector.logError("Errore durante onViewCreated: ${e.message}")
         }
+    }
+    private fun showPopupMenu(anchor: View) {
+        val popupMenu = PopupMenu(ContextThemeWrapper(requireContext(), R.style.CustomPopupMenu), anchor)
+        popupMenu.menuInflater.inflate(R.menu.pop_up_menu, popupMenu.menu)
+        popupMenu.setOnMenuItemClickListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.about -> {
+                    try{
+                    // Handle choice two
+                    Snackbar.make(requireView(), "About button selected", Snackbar.LENGTH_SHORT).show()
+
+                    findNavController().navigate(R.id.action_homeFragment_to_aboutFragment)
+
+                }
+                catch(e: Exception){
+                    DataCollector.logError("Errore durante il click dell'about button: ${e.message}")
+                }
+                true}
+                R.id.info -> {
+                    // Handle choice three
+
+                    try {
+                        // Handle choice two
+                        Snackbar.make(requireView(), "Info button selected", Snackbar.LENGTH_SHORT)
+                            .show()
+
+                        findNavController().navigate(R.id.action_homeFragment_to_infoFragment)
+
+                    } catch (e: Exception) {
+                        DataCollector.logError("Errore durante il click dell'info button: ${e.message}")
+                    }
+                    true
+                }else -> false
+            }
+        }
+        popupMenu.show()
     }
 }

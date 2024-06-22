@@ -75,7 +75,7 @@ class SingleGameLogic(
         checkAllMatched()
 
 
-        //WITH THE POSSIBILITY TO FLIP THE CARDS BACK DOWN, TO BE DISCUSSED.
+        //WITH THE POSSIBILITY TO FLIP THE CARDS BACK DOWN, TO NOT BE DISCUSSED.
 
         /*val card = cards[position]
         if (card.isMatched) {

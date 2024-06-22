@@ -1,4 +1,9 @@
 <resources>
     <string name="app_name">MatchGame</string>
     <string name="time_remaining"> %1$d </string>
+    <string name="menu_info">Info</string>
+    <string name="menu_about">About</string>
+    <string name="about_description">The author of this application are Tommaso Bortolin, Diana Plosnita, Giuseppe d\'Aurelia.</string>
+    <string name="info_description">This application is a university project for the porgrammazione di sistemi embedded\'s course.</string>
+
 </resources>
