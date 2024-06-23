@@ -1,6 +1,8 @@
 package com.example.matchgame.logic
 
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import com.example.matchgame.R
 import com.example.matchgame.models.MemoryCard
 
@@ -15,6 +17,8 @@ class SingleGameLogic(
 
     private lateinit var cards: List<MemoryCard>
     private var indexOfSingleSelectedCard: Int? = null
+    private var handler = Handler(Looper.getMainLooper())
+
 
     init {
         setupGame()
@@ -134,6 +138,12 @@ class SingleGameLogic(
             cards[position1].isMatched = true
             cards[position2].isMatched = true
             ToastContextCallback("Match found!")
+        } else {
+            handler.postDelayed({
+                cards[position1].isFaceUp = false
+                cards[position2].isFaceUp = false
+                updateViews()
+            }, 350)
         }
     }
 
