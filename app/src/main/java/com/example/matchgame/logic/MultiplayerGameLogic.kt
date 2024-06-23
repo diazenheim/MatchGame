@@ -1,6 +1,8 @@
 package com.example.matchgame.logic
 
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import com.example.matchgame.R
 import com.example.matchgame.models.MemoryCard
 
@@ -9,13 +11,16 @@ class MultiplayerGameLogic(
     private val onAllCardsMatchedCallback: () -> Unit,
     private val ToastContextCallback: (String) -> Unit,
     private val numberOfCards: Int,
-    private val currentPlayerProvider: () -> Int
+    private val currentPlayerProvider: () -> Int,
+    private val switchPlayerCallback: () -> Unit
 ) : IGameLogic {
 
     private lateinit var cards: List<MemoryCard>
     private var indexOfSingleSelectedCard: Int? = null
     private var player1Score = 0
     private var player2Score = 0
+    private val handler = Handler(Looper.getMainLooper())
+
 
     init {
         setupGame()
@@ -103,6 +108,13 @@ class MultiplayerGameLogic(
             } else {
                 player2Score++
             }
+        } else {
+            handler.postDelayed({
+                cards[position1].isFaceUp = false
+                cards[position2].isFaceUp = false
+                updateViews()
+                switchPlayerCallback()
+            }, 350)
         }
     }
 

@@ -18,7 +18,7 @@ class MultiplayerFragment : BaseRoundFragment() {
     private var flipsThisTurn = 0
 
     override fun createGameLogic(): IGameLogic {
-        return MultiplayerGameLogic(::updateViews, ::onAllCardsMatched, this::showToast, getNumberOfCards(), this::getCurrentPlayer)
+        return MultiplayerGameLogic(::updateViews, ::onAllCardsMatched, this::showToast, getNumberOfCards(), this::getCurrentPlayer, this::switchPlayer)
     }
 
     override fun getLayoutId(): Int {
@@ -58,10 +58,7 @@ class MultiplayerFragment : BaseRoundFragment() {
             logButtonClick(position) // Log the button click
             gameLogic.onCardClicked(position)
             if (flipsThisTurn == 2) {
-                // Switch turn after 2 flips
                 flipsThisTurn = 0
-                currentPlayer = if (currentPlayer == 1) 2 else 1
-                updatePlayerTurn()
             }
         } else {
             showToast("You can flip only two cards per turn")
@@ -81,6 +78,11 @@ class MultiplayerFragment : BaseRoundFragment() {
         playerTurnTextView.text = "Player $currentPlayer's Turn"
         val colorResId = if (currentPlayer == 1) R.color.red else R.color.blue
         playerTurnTextView.setTextColor(ContextCompat.getColor(requireContext(), colorResId))
+    }
+
+    private fun switchPlayer() {
+        currentPlayer = if (currentPlayer == 1) 2 else 1
+        updatePlayerTurn()
     }
 
     fun getCurrentPlayer(): Int {
