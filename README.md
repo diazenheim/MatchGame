@@ -21,7 +21,7 @@ This project includes:
 
 ### Steps to Install
 1. Clone the Repository
-2. Open in Android Studio
+2. Open the project in Android Studio
 3. Build the Project. Allow Android Studio to download and configure necessary dependencies
 
 ## Usage Instructions
@@ -47,9 +47,9 @@ The app uses Firebase to collect and send telemetry data to monitor its function
 - Game start
 - Game end
 - Application launch time
-- Clicking the play button time
+- Clicking of the play button time
 - Level completion time 
-- Number of attempts per round (aka how many time a card was flipped. The cards are identified by index)
+- Number of attempts per round (how many times a card was flipped; the cards are identified by their index)
 - Average time between two consecutive clicks
 - Game abandonment
 - Error tracking
@@ -59,8 +59,10 @@ The app uses Firebase to collect and send telemetry data to monitor its function
 - Battery usage (with initial and final battery percentage)
 - Total game duration
 
+*Note: These telemetry features are implemented for both single-player and multiplayer modes.*
+
 ## Repository Structure
-`app/src/main/java/com/example/matchgame/` 
+`app/src/main/java/com/example/matchgame/`
 * `ui/`
      * `BaseRoundFragment.kt` - Abstract class managing the fragments
      * `Round1Fragment.kt` - First round fragment
@@ -68,18 +70,18 @@ The app uses Firebase to collect and send telemetry data to monitor its function
      * `Round3Fragment.kt` - Third round fragment
      * `MultiplayerFragment.kt` - Multiplayer fragment
      * `HomeFragment.kt` - Home fragment
-     * `YouLoseFragment`, `YouWinFragment`, `Player1WinFragment`, `Player2WinFragment`, `AboutFragment`, `DialogFragment`, `InfoFragment` - display fragments
+     * `YouLoseFragment.kt`, `YouWinFragment.kt`, `Player1WinFragment.kt`, `Player2WinFragment.kt`, `AboutFragment.kt`, `DialogFragment.kt`, `InfoFragment.kt` - Display fragments
 * `logic/`
-    * `IGameLogic` - Game logic interface, contains common methods definition
+    * `IGameLogic.kt` - Game logic interface, contains common methods definition
     * `SingleGameLogic.kt` - Game logic for single player mode
     * `MultiplayerGameLogic.kt` - Game logic for multiplayer mode
 * `models/`
     * `MemoryCard.kt` - Represents a single card in the memory game, holding its state and identifier
 * `adapter/`
-    * `CardAdapter` - Manages the logic for displaying the cards in the RecyclerView
+    * `CardAdapter.kt` - Manages the logic for displaying the cards in the RecyclerView
 * `telemetry/`
-    * `DataCollector` - Manages and sends data to the Firebase console for the telemetry part of the project
-* `MainActivity.kt` - `MainActivity.kt` - The main activity that serves as the entry point of the application
+    * `DataCollector.kt` - Manages and sends data to the Firebase console for the telemetry part of the project
+* `MainActivity.kt` - The main activity that serves as the entry point of the application
 
 ## Contact 
 1. diana.plosnita@studenti.unipd.it
