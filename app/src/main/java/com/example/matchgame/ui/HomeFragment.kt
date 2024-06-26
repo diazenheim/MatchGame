@@ -12,7 +12,6 @@ import androidx.navigation.fragment.findNavController
 import android.util.Log
 import android.view.ContextThemeWrapper
 import android.widget.PopupMenu
-import com.example.matchgame.MainActivity
 import com.google.android.material.snackbar.Snackbar
 
 class HomeFragment : Fragment() {
@@ -25,11 +24,8 @@ class HomeFragment : Fragment() {
 
 
         Log.d("mainActivity", "AppStarted")
-            // Inflate the layout for this fragment
-            val view = inflater.inflate(R.layout.home_layout, container, false)
-
-
-            return view
+        // Inflate the layout for this fragment
+        return inflater.inflate(R.layout.home_layout, container, false)
 
     }
 
@@ -82,8 +78,6 @@ class HomeFragment : Fragment() {
             when (menuItem.itemId) {
                 R.id.about -> {
                     try{
-                    // Handle choice two
-                    Snackbar.make(requireView(), "About button selected", Snackbar.LENGTH_SHORT).show()
 
                     findNavController().navigate(R.id.action_homeFragment_to_aboutFragment)
 
@@ -96,9 +90,6 @@ class HomeFragment : Fragment() {
                     // Handle choice three
 
                     try {
-                        // Handle choice two
-                        Snackbar.make(requireView(), "Info button selected", Snackbar.LENGTH_SHORT)
-                            .show()
 
                         findNavController().navigate(R.id.action_homeFragment_to_infoFragment)
 

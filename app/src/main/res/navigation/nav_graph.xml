@@ -120,6 +120,7 @@
         android:name="com.example.matchgame.ui.AboutFragment"
         android:label="About"
         tools:layout="@layout/about_layout"/>
+
     <fragment
         android:id="@+id/infoFragment"
         android:name="com.example.matchgame.ui.InfoFragment"
@@ -135,6 +136,5 @@
             android:id="@+id/action_dialogMenuFragment_to_homeFragment"
             app:destination="@id/homeFragment" />
     </dialog>
-    />
 
 </navigation>

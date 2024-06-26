@@ -1,9 +1,41 @@
 <resources>
     <string name="app_name">MatchGame</string>
-    <string name="time_remaining"> %1$d </string>
+    <string name="time_remaining">%1$d</string>
     <string name="menu_info">Info</string>
     <string name="menu_about">About</string>
-    <string name="about_description">The author of this application are Tommaso Bortolin, Diana Plosnita, Giuseppe d\'Aurelia.</string>
-    <string name="info_description">This application is a university project for the porgrammazione di sistemi embedded\'s course.</string>
+    <string name="about_description">
+        <![CDATA[
+        The developers of this application are:<br/>
+        1. Diana Plosnita<br/>
+        2. Tommaso Bortolin<br/>
+        3. Giuseppe d&#39;Auria<br/><br/>
 
+        Contact us at:<br/>
+        - Diana Plosnita: diana.plosnita@studenti.unipd.it<br/>
+        - Tommaso Bortolin: tommaso.bortolin@studenti.unipd.it<br/>
+        - Giuseppe d&#39;Auria: giuseppe.dauria@studenti.unipd.it
+        ]]>
+    </string>
+    <string name="info_description">
+        <![CDATA[
+        Welcome to the Pokémon Cards Matching Game,
+        an Android application designed to provide a fun and engaging way to play a classic card matching game
+        with Pokémons. This project is part of the embedded course assignment to implement
+        telemetry data transmission using a freely available telemetry tool.<br/><br/>
+
+        <b>Game Rules:</b><br/>
+        1. The game consists of three rounds (8, 12, and 16 cards, respectively),
+        each with an appropriate timer (30, 60, and 90 seconds, respectively).
+        Match pairs of Pokémon cards by flipping them. Complete each round to progress to the next.<br/><br/>
+
+        2. Multiplayer mode allows you to play against another player.
+        There&#39;s one round with 22 cards, and two players can play on the same device.
+        Each player gets one turn during which they can: Match 2 cards and get 1 point,
+        or reveal two different cards and get 0 points. The player with the most points wins.
+        The turns are distinguishable by the card frame&#39;s color: red or blue.<br/><br/>
+
+        <b>Telemetry:</b><br/>
+        This app collects and sends data about its own functioning and user behavior.
+        ]]>
+    </string>
 </resources>
