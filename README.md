@@ -29,15 +29,18 @@ This project includes:
 ### Single Player Mode
 1. Start the game and select "Single Player" from the main menu.
 2. Gameplay:
-     2.1. The game consists of three rounds (with 8, 12 and 16 cards, respectively)
-     2.2. Match pairs of Pokémon cards by flipping them. Complete each round to progress to the next.
+    1. The game consists of three rounds (with 8, 12, and 16 cards, respectively).
+    2. Match pairs of Pokémon cards by flipping them. Complete each round to progress to the next.
 
 ### Multiplayer Mode
 1. Start the game and select "Multiplayer" from the main menu.
 2. Gameplay:
-     2.1. There's one round with 22 cards, two players can play at the same phone. 
-     2.2. Each player gets one turn during which he can: match 2 cards and get +1 points, reveal two different cards and get 0 points. Player with the most points wins.
-     2.3. The turns are distinguishable by cards frame's color: red or blue.
+    1. There's one round with 22 cards, and two players can play on the same phone.
+    2. Each player gets one turn during which they can:
+        - Match 2 cards and get +1 points.
+        - Reveal two different cards and get 0 points. The player with the most points wins.
+    3. The turns are distinguishable by the card frame's color: red or blue.
+
 
 ## Telemetry Data Transmission
 The app uses Firebase to collect and send telemetry data to monitor its functioning and user behavior. This includes:
