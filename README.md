@@ -29,7 +29,7 @@ This project includes:
 ### Single Player Mode
 1. Start the game and select "Single Player" from the main menu.
 2. Gameplay:
-    1. The game consists of three rounds (with 8, 12, and 16 cards, respectively).
+    1. The game consists of three rounds (8, 12, and 16 cards, respectively), each with an appropriate timer (30, 60, and 90 seconds, respectively).
     2. Match pairs of Pokémon cards by flipping them. Complete each round to progress to the next.
 
 ### Multiplayer Mode
