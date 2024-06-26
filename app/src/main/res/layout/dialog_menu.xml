@@ -1,44 +1,48 @@
-<?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@android:color/transparent">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/popup_background"
+    android:padding="16dp"
+    android:gravity="center"
+    android:layout_gravity="center"
+    tools:ignore="ExtraText">
 
-    <LinearLayout
-        android:layout_width="253dp"
-        android:layout_height="192dp"
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:paddingBottom="16dp"
+        android:text="Do you want to leave the game?"
+        android:textColor="#FAD607"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
+    <ImageButton
+        android:id="@+id/resume_button"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
         android:layout_gravity="center"
-        android:background="@drawable/popup_background"
-        android:orientation="vertical"
-        android:padding="16dp">
+        android:alpha="0.9"
+        android:background="@null"
+        android:contentDescription="Resume game"
+        android:scaleType="centerInside"
+        android:src="@drawable/resume_button"
+        tools:ignore="TouchTargetSizeCheck"
+        android:layout_marginBottom="16dp" />
+    />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:paddingBottom="16dp"
-            android:text="Menu"
-            android:textSize="18sp"
-            android:textStyle="bold" />
+    <ImageButton
+        android:id="@+id/exit_button"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_gravity="center"
+        android:alpha="0.9"
+        android:background="@null"
+        android:contentDescription="Exit game"
+        android:scaleType="centerInside"
+        android:src="@drawable/exit_button"
+        tools:ignore="TouchTargetSizeCheck" />
 
-        <Button
-            android:id="@+id/choice_one"
-
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Choice One" />
-
-        <Button
-            android:id="@+id/choice_two"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Choice Two" />
-
-        <Button
-            android:id="@+id/choice_three"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Choice Three" />
-
-    </LinearLayout>
-</FrameLayout>
+</LinearLayout>

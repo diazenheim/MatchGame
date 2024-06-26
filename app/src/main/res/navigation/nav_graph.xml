@@ -39,6 +39,9 @@
         <action
             android:id="@+id/action_round1Fragment_to_youLoseFragment"
             app:destination="@id/youLoseFragment" />
+        <action
+            android:id="@+id/action_round1Fragment_to_dialogMenuFragment"
+            app:destination="@id/dialogMenuFragment" />
     </fragment>
 
     <fragment
@@ -71,16 +74,21 @@
         android:id="@+id/youLoseFragment"
         android:name="com.example.matchgame.ui.YouLoseFragment"
         android:label="Lose Layout"
-        tools:layout="@layout/youlose_layout"/>
-
+        tools:layout="@layout/youlose_layout">
+        <action
+            android:id="@+id/action_youLoseFragment_to_homeFragment"
+            app:destination="@+id/homeFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/youWinFragment"
         android:name="com.example.matchgame.ui.YouWinFragment"
         android:label="Win Layout"
-        tools:layout="@layout/youwin_layout"
-        />
-
+        tools:layout="@layout/youwin_layout">
+        <action
+            android:id="@+id/action_youWinFragment_to_homeFragment"
+            app:destination="@+id/homeFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/multiplayerFragment"
@@ -117,5 +125,16 @@
         android:name="com.example.matchgame.ui.InfoFragment"
         android:label="About"
         tools:layout="@layout/info_layout"/>
+
+    <dialog
+        android:id="@+id/dialogMenuFragment"
+        android:name="com.example.matchgame.ui.DialogFragment"
+        android:label="Dialog Menu"
+        tools:layout="@layout/dialog_menu">
+        <action
+            android:id="@+id/action_dialogMenuFragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
+    </dialog>
+    />
 
 </navigation>

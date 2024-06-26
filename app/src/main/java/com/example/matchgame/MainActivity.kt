@@ -247,6 +247,21 @@ class MainActivity : AppCompatActivity() {
             }
             .show()
     }
+    override fun onBackPressed() {
+        // Controlla quale fragment è attualmente visibile
+        val currentDestination = navController.currentDestination?.id
+        if (currentDestination == R.id.round1Fragment || currentDestination == R.id.round2Fragment || currentDestination == R.id.round3Fragment || currentDestination == R.id.multiplayerFragment) {
+            // Naviga al DialogFragment quando il tasto "indietro" è premuto
+            navController.navigate(R.id.dialogMenuFragment)
+        }
+        else if(currentDestination == R.id.youWinFragment || currentDestination == R.id.youLoseFragment)
+        {
+            navController.navigate(R.id.homeFragment)
+        }
+        else {
+            super.onBackPressed()
+        }
+    }
 }
 
 

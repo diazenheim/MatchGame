@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.example.matchgame.MainActivity
 import com.example.matchgame.R
 import com.example.matchgame.telemetry.DataCollector
@@ -45,5 +46,9 @@ class YouWinFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val homeButton: ImageButton = view.findViewById(R.id.homebutton)//Questo button serve per tornare alla home
+        homeButton.setOnClickListener {
+            findNavController().navigate(R.id.action_youWinFragment_to_homeFragment)
+        }
     }
 }

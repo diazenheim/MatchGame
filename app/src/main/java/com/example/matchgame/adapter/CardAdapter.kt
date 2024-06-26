@@ -1,11 +1,14 @@
 package com.example.matchgame.adapter
 
 import android.graphics.Color
+import android.graphics.ColorMatrix
+import android.graphics.ColorMatrixColorFilter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.ImageButton
+import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.matchgame.R
 import com.example.matchgame.models.MemoryCard
@@ -39,7 +42,7 @@ class CardAdapter(
 
         private val imageButton: ImageButton = itemView.findViewById(R.id.imgbtn)
         private val frameLayout: FrameLayout = itemView.findViewById(R.id.frame_layout)
-
+        private val lockIcon: ImageView = itemView.findViewById(R.id.lock)
 
         fun bind(card: MemoryCard, cardClickListener: (Int) -> Unit, getCurrentPlayer: (() -> Int)?) { // Associates the MemoryCard data with the view
             if (card.isFaceUp) {
@@ -47,7 +50,13 @@ class CardAdapter(
             } else {
                 imageButton.setImageResource(R.drawable.card_down)
             }
-
+            if (card.isBlocked) {
+                imageButton.colorFilter = desaturate()
+                lockIcon.visibility = View.VISIBLE // Mostra il lucchetto
+            } else {
+                imageButton.colorFilter = null // Rimuove il filtro se la carta non è bloccata
+                lockIcon.visibility = View.GONE // Nasconde il lucchetto
+            }
             if (card.isMatched) {
                 frameLayout.alpha = 0.1f // Set higher transparency for matched cards
             } else {
@@ -62,6 +71,11 @@ class CardAdapter(
             }
 
             imageButton.setOnClickListener { cardClickListener(adapterPosition) } // Sets the click listener, which will call the callback with the card's position
+        }
+        private fun desaturate(): ColorMatrixColorFilter { //funzione per desaturare immagine
+            val matrix = ColorMatrix()
+            matrix.setSaturation(0f)
+            return ColorMatrixColorFilter(matrix)
         }
     }
 }

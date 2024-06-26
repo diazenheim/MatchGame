@@ -8,6 +8,7 @@ import com.example.matchgame.logic.SingleGameLogic
 
 
 class Round3Fragment : BaseRoundFragment() {
+    private val availableRevealsForCard = mutableMapOf<Int, Int>()
     override fun createGameLogic(): IGameLogic {
         return SingleGameLogic(::updateViews, ::onAllCardsMatched, this::showToast, 3, getNumberOfCards())
     }
@@ -34,8 +35,12 @@ class Round3Fragment : BaseRoundFragment() {
     }
 
     override fun onCardClicked(position: Int) {
-        logButtonClick(position) // Log the button click
-        gameLogic.onCardClicked(position)
+        val reveals = availableRevealsForCard[position] ?: 0
+        if (reveals >= 2) { // Se una carta è già scoperta due volte, devo attendere
+        } else {
+            logButtonClick(position) // Log the button click
+            gameLogic.onCardClicked(position)
+        }
     }
 
     override fun onAllCardsMatched() {
