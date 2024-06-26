@@ -254,7 +254,8 @@ class MainActivity : AppCompatActivity() {
             // Naviga al DialogFragment quando il tasto "indietro" è premuto
             navController.navigate(R.id.dialogMenuFragment)
         }
-        else if(currentDestination == R.id.youWinFragment || currentDestination == R.id.youLoseFragment)
+        else if(currentDestination == R.id.youWinFragment || currentDestination == R.id.youLoseFragment
+                || currentDestination == R.id.player1WinFragment || currentDestination == R.id.player2WinFragment)
         {
             navController.navigate(R.id.homeFragment)
         }
