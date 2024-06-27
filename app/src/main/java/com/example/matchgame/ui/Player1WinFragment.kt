@@ -5,7 +5,9 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.example.matchgame.MainActivity
 import com.example.matchgame.R
 import com.example.matchgame.telemetry.DataCollector
@@ -23,7 +25,13 @@ class Player1WinFragment : Fragment() {
 
         return view
     }
-
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        val homeButton: ImageButton = view.findViewById(R.id.homebutton)//Questo button serve per tornare alla home
+        homeButton.setOnClickListener {
+            findNavController().navigate(R.id.action_player1WinFragment_to_homeFragment)
+        }
+    }
     private fun logMultiplayerCompletionTime() {
         try {
             val endTime = System.currentTimeMillis()

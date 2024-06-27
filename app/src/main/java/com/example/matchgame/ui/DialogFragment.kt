@@ -41,4 +41,12 @@ class DialogFragment : DialogFragment() {
             ViewGroup.LayoutParams.WRAP_CONTENT
         )
     }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        val currentFragment = requireActivity().supportFragmentManager.findFragmentById(R.id.nav_host_fragment)?.childFragmentManager?.fragments?.get(0)
+        if (currentFragment is BaseRoundFragment) {
+            currentFragment.resumeTimer()
+        }
+    }
 }

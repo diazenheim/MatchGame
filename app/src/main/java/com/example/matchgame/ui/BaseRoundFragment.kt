@@ -34,7 +34,7 @@ abstract class BaseRoundFragment : Fragment() {
     protected var timeRemaining: Long = 0 // Initialize with 0, will be set in onViewCreated
     protected var startTime: Long = 0 // Variable to store start time
     protected var isGameCompleted: Boolean = false // Track if the game is completed
-
+    private var isPaused: Boolean = false
     private val buttonClickCounts = mutableMapOf<Int, Int>() // Counter for button clicks
     private val buttonClickTimes = mutableListOf<Long>() // List to store button click times
 
@@ -184,7 +184,17 @@ abstract class BaseRoundFragment : Fragment() {
             DataCollector.logError("Errore durante startTimer di BaseRoundFragment: ${e.message}")
         }
     }
+    fun pauseTimer() {
+        timer?.cancel()
+        isPaused = true
+    }
 
+    fun resumeTimer() {
+        if (isPaused) {
+            startTimer(timeRemaining)
+            isPaused = false
+        }
+    }
     /*override fun onPause() {
         super.onPause()
         if (!isGameCompleted) {

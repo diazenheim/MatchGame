@@ -23,6 +23,7 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import androidx.appcompat.app.AlertDialog
 import android.provider.Settings
+import com.example.matchgame.ui.BaseRoundFragment
 
 
 // The main entry point of the app, responsible for loading the fragment that contains the game UI
@@ -253,6 +254,10 @@ class MainActivity : AppCompatActivity() {
         if (currentDestination == R.id.round1Fragment || currentDestination == R.id.round2Fragment || currentDestination == R.id.round3Fragment || currentDestination == R.id.multiplayerFragment) {
             // Naviga al DialogFragment quando il tasto "indietro" è premuto
             navController.navigate(R.id.dialogMenuFragment)
+             val currentFragment=supportFragmentManager.findFragmentById(R.id.nav_host_fragment)?.childFragmentManager?.fragments?.get(0)
+            if (currentFragment is BaseRoundFragment) {
+                currentFragment.pauseTimer()
+            }
         }
         else if(currentDestination == R.id.youWinFragment || currentDestination == R.id.youLoseFragment
                 || currentDestination == R.id.player1WinFragment || currentDestination == R.id.player2WinFragment)

@@ -1,6 +1,7 @@
 package com.example.matchgame.logic
 
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.os.Handler
 import android.os.Looper
 import com.example.matchgame.R
@@ -19,7 +20,6 @@ class SingleGameLogic(
     private lateinit var cards: List<MemoryCard>
     private var indexOfSingleSelectedCard: Int? = null
     private var handler = Handler(Looper.getMainLooper())
-    private var isProcessing = false // serve per gestire correttamente il delay nel checkForMatch, intanto che le carte vengono girate, l'utente non puù selezionare altre carte
 
     init {
         setupGame()
@@ -64,7 +64,6 @@ class SingleGameLogic(
     override fun onCardClicked(position: Int) {
 
         //WITHOUT THE POSSIBILITY TO FLIP THE CARDS BACK DOWN, TO BE DISCUSSED.
-        if (isProcessing) return
         val card = cards[position]
         if (card.isMatched || card.isFaceUp) return
         if(card.isBlocked){
@@ -178,15 +177,13 @@ class SingleGameLogic(
             cards[position1].isMatched = true
             cards[position2].isMatched = true
             ToastContextCallback("Match found!")
-        } else {
-            isProcessing = true
+        }/* else {
             handler.postDelayed({
                 cards[position1].isFaceUp = false
                 cards[position2].isFaceUp = false
                 updateViews()
             }, 350)
-            isProcessing = false
-        }
+        }*/
     }
 
     private fun updateViews() {
@@ -207,10 +204,14 @@ class SingleGameLogic(
     private fun blockCard(position: Int) { //blocca temporaneamente la carta
         cards[position].isBlocked = true
         updateViews()
-        Handler(Looper.getMainLooper()).postDelayed({
-            cards[position].isBlocked = false
-            cards[position].AvailableReveals = 2
-            updateViews()
-        }, 4000)
+        object : CountDownTimer(4000, 4000) {
+            override fun onTick(millisUntilFinished: Long) {}
+
+            override fun onFinish() {
+                cards[position].isBlocked = false
+                cards[position].AvailableReveals = 2
+                updateViews()
+            }
+        }.start()
     }
 }

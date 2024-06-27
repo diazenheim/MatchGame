@@ -8,5 +8,20 @@
     android:gravity="center"
     tools:context=".ui.Player1WinFragment"
     tools:ignore="MissingClass">
-
+    <ImageButton
+        android:id="@+id/homebutton"
+        android:layout_width="99dp"
+        android:layout_height="67dp"
+        android:layout_gravity="center"
+        android:alpha="0.9"
+        android:background="@null"
+        android:contentDescription="Play button"
+        android:scaleType="centerInside"
+        android:src="@drawable/homebutton"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0.9"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.9" />
 </androidx.constraintlayout.widget.ConstraintLayout>

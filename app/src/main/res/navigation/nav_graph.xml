@@ -107,13 +107,21 @@
         android:id="@+id/player1WinFragment"
         android:name="com.example.matchgame.ui.Player1WinFragment"
         android:label="Player 1 Wins"
-        tools:layout="@layout/player1wins_layout"/>
+        tools:layout="@layout/player1wins_layout">
+        <action
+            android:id="@+id/action_player1WinFragment_to_homeFragment"
+            app:destination="@+id/homeFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/player2WinFragment"
         android:name="com.example.matchgame.ui.Player2WinFragment"
         android:label="Player 2 Wins"
-        tools:layout="@layout/player2wins_layout"/>
+        tools:layout="@layout/player2wins_layout">
+        <action
+            android:id="@+id/action_player2WinFragment_to_homeFragment"
+            app:destination="@+id/homeFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/aboutFragment"
