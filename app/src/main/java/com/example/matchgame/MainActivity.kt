@@ -264,7 +264,8 @@ class MainActivity : AppCompatActivity() {
     override fun onBackPressed() {
         // Controlla quale fragment è attualmente visibile
         val currentDestination = navController.currentDestination?.id
-        if (currentDestination == R.id.round1Fragment || currentDestination == R.id.round2Fragment || currentDestination == R.id.round3Fragment || currentDestination == R.id.multiplayerFragment) {
+        if(currentDestination == R.id.multiplayerFragment) navController.navigate(R.id.dialogMenuFragment)
+        else if (currentDestination == R.id.round1Fragment || currentDestination == R.id.round2Fragment || currentDestination == R.id.round3Fragment) {
             // Naviga al DialogFragment quando il tasto "indietro" è premuto
             navController.navigate(R.id.dialogMenuFragment)
              val currentFragment=supportFragmentManager.findFragmentById(R.id.nav_host_fragment)?.childFragmentManager?.fragments?.get(0)
