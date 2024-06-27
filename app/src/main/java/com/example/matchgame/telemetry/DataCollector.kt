@@ -184,7 +184,7 @@ object DataCollector {
         logEvent("app_launch_time", bundle)
     }
 
-    fun logClickPlayButtonTime(launchTime: Double) {
+    fun logClickPlayButtonTime(launchTime: Double, string: String) {
         val bundle = Bundle().apply {
             putDouble("click_play_button_seconds", launchTime)
         }

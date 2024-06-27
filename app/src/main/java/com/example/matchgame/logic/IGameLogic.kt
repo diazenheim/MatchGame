@@ -9,4 +9,6 @@ interface IGameLogic {
     fun restoreState(savedInstanceState: Bundle)
     fun getCards(): List<MemoryCard>
     fun determineWinner(): Int?
+
+    fun getScore(player: String): Int
 }

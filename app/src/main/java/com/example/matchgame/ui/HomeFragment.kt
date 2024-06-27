@@ -43,7 +43,7 @@ class HomeFragment : Fragment() {
                 try {
                     //Send how much time is used to click the playButton
                     val clickPlayButton = (System.currentTimeMillis() - startHomeFragmentTime) / 1000.0
-                    DataCollector.logClickPlayButtonTime(clickPlayButton)
+                    DataCollector.logClickPlayButtonTime(clickPlayButton, "single-player")
                     findNavController().navigate(R.id.action_homeFragment_to_round1Fragment)
                 }catch(e: Exception){
                     DataCollector.logError("Errore durante il click del playButton: ${e.message}")
@@ -54,6 +54,8 @@ class HomeFragment : Fragment() {
                     //Send how much time is used to click the playButton
                     //val clickMultiplayerButton = (System.currentTimeMillis() - startHomeFragmentTime) / 1000.0
                     //DataCollector.logClickPlayButtonTime(clickPlayButton)
+                    val clickPlayMultiButton = (System.currentTimeMillis() - startHomeFragmentTime) / 1000.0
+                    DataCollector.logClickPlayButtonTime(clickPlayMultiButton, "multiplayer")
                     findNavController().navigate(R.id.action_homeFragment_to_multiplayerFragment)
                 }catch(e: Exception){
                     DataCollector.logError("Errore durante il click del playButton: ${e.message}")

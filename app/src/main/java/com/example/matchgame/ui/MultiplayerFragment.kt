@@ -14,8 +14,10 @@ import com.example.matchgame.logic.MultiplayerGameLogic
 class MultiplayerFragment : BaseRoundFragment() {
 
     private lateinit var playerTurnTextView: TextView
+    private lateinit var playerPointTextView: TextView
     private var currentPlayer = 1
     private var flipsThisTurn = 0
+    private var point =0
 
     override fun createGameLogic(): IGameLogic {
         return MultiplayerGameLogic(::updateViews, ::onAllCardsMatched, this::showToast, getNumberOfCards(), this::getCurrentPlayer, this::switchPlayer)
@@ -46,6 +48,8 @@ class MultiplayerFragment : BaseRoundFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         playerTurnTextView = view.findViewById(R.id.playerTurnTextView)
+        playerPointTextView= view.findViewById(R.id.counterPoint)
+
         updatePlayerTurn()
         cardAdapter = CardAdapter(gameLogic.getCards(), this::onCardClicked, this::getCurrentPlayer)
         recyclerView.adapter = cardAdapter
@@ -53,6 +57,7 @@ class MultiplayerFragment : BaseRoundFragment() {
 
 
     override fun onCardClicked(position: Int) {
+        updatePlayerTurn()
         if (flipsThisTurn < 2) {
             flipsThisTurn++
             logButtonClick(position) // Log the button click
@@ -75,8 +80,10 @@ class MultiplayerFragment : BaseRoundFragment() {
     }
 
     private fun updatePlayerTurn() {
-        playerTurnTextView.text = "Player $currentPlayer's Turn"
+        playerTurnTextView.text = "Player $currentPlayer"
+        playerPointTextView.text ="Score: ${gameLogic.getScore("$currentPlayer")}"
         val colorResId = if (currentPlayer == 1) R.color.red else R.color.blue
+        playerPointTextView.setTextColor(ContextCompat.getColor(requireContext(), colorResId))
         playerTurnTextView.setTextColor(ContextCompat.getColor(requireContext(), colorResId))
     }
 

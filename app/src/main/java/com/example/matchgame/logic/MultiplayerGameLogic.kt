@@ -12,7 +12,10 @@ class MultiplayerGameLogic(
     private val ToastContextCallback: (String) -> Unit,
     private val numberOfCards: Int,
     private val currentPlayerProvider: () -> Int,
-    private val switchPlayerCallback: () -> Unit
+    private val switchPlayerCallback: () -> Unit,
+
+
+
 ) : IGameLogic {
 
     private lateinit var cards: List<MemoryCard>
@@ -20,6 +23,7 @@ class MultiplayerGameLogic(
     private var player1Score = 0
     private var player2Score = 0
     private val handler = Handler(Looper.getMainLooper())
+    private var score=0
 
 
     init {
@@ -132,5 +136,15 @@ class MultiplayerGameLogic(
 
     override fun determineWinner(): Int {
         return if (player1Score > player2Score) 1 else 2
+    }
+
+    override fun getScore(player: String): Int {
+        if(player=="1")
+        {
+            score= player1Score
+        }
+        else
+            score =player2Score
+        return score
     }
 }

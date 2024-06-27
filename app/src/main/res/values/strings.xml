@@ -3,6 +3,8 @@
     <string name="time_remaining">%1$d</string>
     <string name="menu_info">Info</string>
     <string name="menu_about">About</string>
+    <string name="player_turn_1">Player 1</string>
+    <string name="player_turn_2">Player 2</string>
     <string name="about_description">
         <![CDATA[
         The developers of this application are:<br/>

@@ -23,7 +23,12 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import androidx.appcompat.app.AlertDialog
 import android.provider.Settings
+<<<<<<< Updated upstream
 import com.example.matchgame.ui.BaseRoundFragment
+=======
+import com.google.firebase.crashlytics.FirebaseCrashlytics
+
+>>>>>>> Stashed changes
 
 
 // The main entry point of the app, responsible for loading the fragment that contains the game UI
@@ -55,6 +60,8 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         firebaseAnalytics = FirebaseAnalytics.getInstance(this)
+        FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(true)
+
 
         // Initialize DataCollector
         DataCollector.initialize(this)
@@ -89,6 +96,10 @@ class MainActivity : AppCompatActivity() {
         //DataCollector.logInternNetworkState()
         //DataCollector.logInternetVelocity()
 
+        Thread.setDefaultUncaughtExceptionHandler { thread, throwable ->
+            FirebaseCrashlytics.getInstance().recordException(throwable)
+        }
+
     }
 
     private fun setUserProperties() {
@@ -102,6 +113,8 @@ class MainActivity : AppCompatActivity() {
             DataCollector.setUserProperty("os_version", osVersion)
         } catch (e: Exception) {
             DataCollector.logError("Errore durante l'impostazione dell'utente: ${e.message}")
+            FirebaseCrashlytics.getInstance().recordException(e)
+
         }
     }
 
@@ -114,6 +127,8 @@ class MainActivity : AppCompatActivity() {
             firebaseAnalytics.logEvent("test_event", bundle)
         } catch (e: Exception) {
             DataCollector.logError("Errore durante l'evento di test: ${e.message}")
+            FirebaseCrashlytics.getInstance().recordException(e)
+
         }
     }
 
@@ -131,6 +146,8 @@ class MainActivity : AppCompatActivity() {
         val endBatteryPercentage = DataCollector.getBatteryPercentage(this)
         Log.d("MainActivity", "End battery percentage: $endBatteryPercentage%")
         DataCollector.logBatteryUsage(initialBatteryPercentage, endBatteryPercentage)
+
+
     }
 
 

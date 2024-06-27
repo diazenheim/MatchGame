@@ -201,6 +201,10 @@ class SingleGameLogic(
     override fun determineWinner(): Int? {
         return null // Single player game does not determine a winner
     }
+
+    override fun getScore(player: String): Int {
+        return 0 // Single player game does not determine a winner
+    }
     private fun blockCard(position: Int) { //blocca temporaneamente la carta
         cards[position].isBlocked = true
         updateViews()
