@@ -23,13 +23,9 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import androidx.appcompat.app.AlertDialog
 import android.provider.Settings
-<<<<<<< Updated upstream
+
 import com.example.matchgame.ui.BaseRoundFragment
-=======
 import com.google.firebase.crashlytics.FirebaseCrashlytics
-
->>>>>>> Stashed changes
-
 
 // The main entry point of the app, responsible for loading the fragment that contains the game UI
 class MainActivity : AppCompatActivity() {

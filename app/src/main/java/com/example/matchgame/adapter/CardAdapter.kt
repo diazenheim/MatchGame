@@ -3,6 +3,7 @@ package com.example.matchgame.adapter
 import android.graphics.Color
 import android.graphics.ColorMatrix
 import android.graphics.ColorMatrixColorFilter
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,6 +13,7 @@ import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.matchgame.R
 import com.example.matchgame.models.MemoryCard
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 
 // Manages the logic for displaying the cards in the RecyclerView used for the second round
 class CardAdapter(
@@ -26,16 +28,34 @@ class CardAdapter(
     }
 
     override fun onBindViewHolder(holder: CardViewHolder, position: Int) {
-        val card = cards[position]
-        //holder.bind(card, cardClickListener) //ottiene la carta alla posizione specificata e la passa al method bind
-        holder.bind(card, cardClickListener, getCurrentPlayer) // Pass getCurrentPlayer to the bind method if available
+        try {
+            val card = cards[position]
+            //holder.bind(card, cardClickListener) //ottiene la carta alla posizione specificata e la passa al method bind
+            holder.bind(
+                card,
+                cardClickListener,
+                getCurrentPlayer
+            ) // Pass getCurrentPlayer to the bind method if available
+
+        } catch(e:Exception){
+
+            Log.e("CardAdapter", "Error binding view holder at position $position", e)
+            FirebaseCrashlytics.getInstance().recordException(e)
+        }
     }
 
     override fun getItemCount() = cards.size //ritorna il numero di carte
 
     fun updateCards(newCards: List<MemoryCard>) {
-        cards = newCards
-        notifyDataSetChanged() //notifico RecyclerView del cambio di carte
+        try {
+
+
+            cards = newCards
+            notifyDataSetChanged() //notifico RecyclerView del cambio di carte
+        }catch(e:Exception){
+            Log.e("CardAdapter", "Error updating cards", e)
+            FirebaseCrashlytics.getInstance().recordException(e)
+        }
     }
 
     class CardViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) { //CardViewHolder contiene la logica per visualizzare e aggiornare una singola carta.
@@ -45,6 +65,7 @@ class CardAdapter(
         private val lockIcon: ImageView = itemView.findViewById(R.id.lock)
 
         fun bind(card: MemoryCard, cardClickListener: (Int) -> Unit, getCurrentPlayer: (() -> Int)?) { // Associates the MemoryCard data with the view
+            try{
             if (card.isFaceUp) {
                 imageButton.setImageResource(card.identifier)
             } else {
@@ -71,6 +92,10 @@ class CardAdapter(
             }
 
             imageButton.setOnClickListener { cardClickListener(adapterPosition) } // Sets the click listener, which will call the callback with the card's position
+        }catch(e:Exception){
+                Log.e("CardViewHolder", "Error binding card", e)
+                FirebaseCrashlytics.getInstance().recordException(e)
+            }
         }
         private fun desaturate(): ColorMatrixColorFilter { //funzione per desaturare immagine
             val matrix = ColorMatrix()

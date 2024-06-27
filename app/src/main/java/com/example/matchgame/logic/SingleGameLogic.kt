@@ -177,13 +177,13 @@ class SingleGameLogic(
             cards[position1].isMatched = true
             cards[position2].isMatched = true
             ToastContextCallback("Match found!")
-        }/* else {
+        } else {
             handler.postDelayed({
                 cards[position1].isFaceUp = false
                 cards[position2].isFaceUp = false
                 updateViews()
             }, 350)
-        }*/
+        }
     }
 
     private fun updateViews() {
