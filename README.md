@@ -44,20 +44,17 @@ This project includes:
 
 ## Telemetry Data Transmission
 The app uses Firebase to collect and send telemetry data to monitor its functioning and user behavior. This includes:
-- Game start
-- Game end
 - Application launch time
-- Clicking of the play button time
-- Level completion time 
-- Number of attempts per round (how many times a card was flipped; the cards are identified by their index)
+- Time of clicking the "single player" or "multiplayer" play button
+- Level completion time
 - Average time between two consecutive clicks
-- Game abandonment
-- Error tracking
-- OS type
-- Device type
-- RAM usage (displaying both total RAM (in GB) and available RAM (in MB))
-- Battery usage (with initial and final battery percentage)
+- Number of attempts per round, i.e., how many times a card was flipped; cards are identified by their index 
+- Battery usage, showing the initial and final battery percentage
+- OS type and device type (user properties)
+- RAM usage, showing both total RAM (in GB) and available RAM (in MB)
 - Total game duration
+- End of the game with its outcome: loss or win
+- Error tracking 
 
 *Note: These telemetry features are implemented for both single-player and multiplayer modes.*
 
