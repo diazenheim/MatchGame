@@ -47,7 +47,7 @@ The app uses Firebase to collect and send telemetry data to monitor its function
 - Application launch time
 - Time of clicking the "single player" or "multiplayer" play button
 - Level completion time
-- Average time between two consecutive clicks
+- Average time between card flips
 - Number of attempts per round, i.e., how many times a card was flipped; cards are identified by their index 
 - Battery usage, showing the initial and final battery percentage
 - OS type and device type (user properties)
