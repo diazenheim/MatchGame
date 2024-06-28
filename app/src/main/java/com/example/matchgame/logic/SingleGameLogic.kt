@@ -65,7 +65,7 @@ class SingleGameLogic(
 
         //WITHOUT THE POSSIBILITY TO FLIP THE CARDS BACK DOWN, TO BE DISCUSSED.
         val card = cards[position]
-        if (card.isMatched || card.isFaceUp) return
+        if (card.isMatched || card.isFaceUp || card.isBlocked) return
         if(card.isBlocked){
             ToastContextCallback("The card is temporarily blocked")
             return
@@ -178,11 +178,21 @@ class SingleGameLogic(
             cards[position2].isMatched = true
             ToastContextCallback("Match found!")
         } else {
-            handler.postDelayed({
-                cards[position1].isFaceUp = false
-                cards[position2].isFaceUp = false
-                updateViews()
-            }, 350)
+                handler.postDelayed({
+                    cards[position1].isFaceUp = false
+                    cards[position2].isFaceUp = false
+                    if (round == 3) {
+                        cards[position1].AvailableReveals--
+                        cards[position2].AvailableReveals--
+                        if (cards[position1].AvailableReveals == 0) {
+                            blockCard(position1)
+                        }
+                        if (cards[position2].AvailableReveals == 0) {
+                            blockCard(position2)
+                        }
+                    }
+                    updateViews()
+                }, 350)
         }
     }
 
@@ -206,9 +216,10 @@ class SingleGameLogic(
         return 0 // Single player game does not determine a winner
     }
     private fun blockCard(position: Int) { //blocca temporaneamente la carta
+        if (cards[position].isBlocked) return
         cards[position].isBlocked = true
         updateViews()
-        object : CountDownTimer(4000, 4000) {
+        object : CountDownTimer(4000, 10) {
             override fun onTick(millisUntilFinished: Long) {}
 
             override fun onFinish() {

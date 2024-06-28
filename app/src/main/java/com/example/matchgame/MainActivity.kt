@@ -278,6 +278,7 @@ class MainActivity : AppCompatActivity() {
         {
             navController.navigate(R.id.homeFragment)
         }
+        else if(currentDestination == R.id.homeFragment) finishAffinity()
         else {
             super.onBackPressed()
         }
