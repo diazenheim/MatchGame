@@ -4,8 +4,10 @@ import android.os.Bundle
 import android.os.CountDownTimer
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import com.example.matchgame.R
 import com.example.matchgame.models.MemoryCard
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 
 class SingleGameLogic(
 
@@ -22,33 +24,51 @@ class SingleGameLogic(
     private var handler = Handler(Looper.getMainLooper())
 
     init {
-        setupGame()
+        try {
+
+
+            setupGame()
+        } catch (e: Exception) {
+            Log.e("SingleGameLogic", "Error during game setup", e)
+            FirebaseCrashlytics.getInstance().recordException(e)
+        }
     }
 
     private fun setupGame() {
         val images: MutableList<Int> = mutableListOf()
         when (round) {
-            1 -> images.addAll(listOf(
-                R.drawable.one,
-                R.drawable.two,
-                R.drawable.three,
-                R.drawable.four))
-            2 -> images.addAll(listOf(
-                R.drawable.one,
-                R.drawable.two,
-                R.drawable.three,
-                R.drawable.four,
-                R.drawable.five,
-                R.drawable.six))
-            3 -> images.addAll(listOf(
-                R.drawable.one,
-                R.drawable.two,
-                R.drawable.three,
-                R.drawable.four,
-                R.drawable.five,
-                R.drawable.six,
-                R.drawable.seven,
-                R.drawable.eight))
+            1 -> images.addAll(
+                listOf(
+                    R.drawable.one,
+                    R.drawable.two,
+                    R.drawable.three,
+                    R.drawable.four
+                )
+            )
+
+            2 -> images.addAll(
+                listOf(
+                    R.drawable.one,
+                    R.drawable.two,
+                    R.drawable.three,
+                    R.drawable.four,
+                    R.drawable.five,
+                    R.drawable.six
+                )
+            )
+
+            3 -> images.addAll(
+                listOf(
+                    R.drawable.one,
+                    R.drawable.two,
+                    R.drawable.three,
+                    R.drawable.four,
+                    R.drawable.five,
+                    R.drawable.six,
+                    R.drawable.seven,
+                    R.drawable.eight
+                )
+            )
         }
         images.addAll(images)
         images.shuffle()
@@ -62,40 +82,41 @@ class SingleGameLogic(
     }
 
     override fun onCardClicked(position: Int) {
+        try {
 
-        //WITHOUT THE POSSIBILITY TO FLIP THE CARDS BACK DOWN, TO BE DISCUSSED.
-        val card = cards[position]
-        if (card.isMatched || card.isFaceUp || card.isBlocked) return
-        if(card.isBlocked){
-            ToastContextCallback("The card is temporarily blocked")
-            return
-        }
-        if (indexOfSingleSelectedCard == null) {
-            restoreCards()
-            indexOfSingleSelectedCard = position
-        } else {
-            checkForMatch(indexOfSingleSelectedCard!!, position)
-            indexOfSingleSelectedCard = null
-        }
+            //WITHOUT THE POSSIBILITY TO FLIP THE CARDS BACK DOWN, TO BE DISCUSSED.
+            val card = cards[position]
+            if (card.isMatched || card.isFaceUp || card.isBlocked) return
+            if (card.isBlocked) {
+                ToastContextCallback("The card is temporarily blocked")
+                return
+            }
+            if (indexOfSingleSelectedCard == null) {
+                restoreCards()
+                indexOfSingleSelectedCard = position
+            } else {
+                checkForMatch(indexOfSingleSelectedCard!!, position)
+                indexOfSingleSelectedCard = null
+            }
 
-        if (round == 3) {
-            // Se la carta è scoperta e viene cliccata, significa che verrà coperta
-            if (card.isFaceUp) {
-                card.AvailableReveals--
-                if (card.AvailableReveals == 0) {
-                    blockCard(position)
+            if (round == 3) {
+                // Se la carta è scoperta e viene cliccata, significa che verrà coperta
+                if (card.isFaceUp) {
+                    card.AvailableReveals--
+                    if (card.AvailableReveals == 0) {
+                        blockCard(position)
+                    }
                 }
             }
-        }
 
-        card.isFaceUp = !card.isFaceUp
-        updateViews()
-        checkAllMatched()
+            card.isFaceUp = !card.isFaceUp
+            updateViews()
+            checkAllMatched()
 
 
-        //WITH THE POSSIBILITY TO FLIP THE CARDS BACK DOWN, TO NOT BE DISCUSSED.
+            //WITH THE POSSIBILITY TO FLIP THE CARDS BACK DOWN, TO NOT BE DISCUSSED.
 
-        /*val card = cards[position]
+            /*val card = cards[position]
         if (card.isMatched) {
             // If the card is already matched, do nothing
             return
@@ -120,64 +141,91 @@ class SingleGameLogic(
         card.isFaceUp = !card.isFaceUp // Toggle the card face up/down state
         updateViews()
         checkAllMatched()*/
+        } catch (e: Exception) {
+            Log.e("SingleGameLogic", "Error during card click handling", e)
+            FirebaseCrashlytics.getInstance().recordException(e)
+
+        }
     }
+
 
     override fun saveState(savedState: Bundle) {
-        savedState.putIntArray("cardIdentifiers", cards.map { it.identifier }.toIntArray())
-        savedState.putBooleanArray("isFaceUp", cards.map { it.isFaceUp }.toBooleanArray())
-        savedState.putBooleanArray("isMatched", cards.map { it.isMatched }.toBooleanArray())
-        savedState.putInt("indexOfSingleSelectedCard", indexOfSingleSelectedCard ?: -1)
-        savedState.putBooleanArray("isBlocked", cards.map { it.isBlocked }.toBooleanArray())
-        savedState.putIntArray("AvailableReveals", cards.map { it.AvailableReveals}.toIntArray())
-        savedState.putInt("indexOfSingleSelectedCard", indexOfSingleSelectedCard ?: -1)
+        try {
+            savedState.putIntArray("cardIdentifiers", cards.map { it.identifier }.toIntArray())
+            savedState.putBooleanArray("isFaceUp", cards.map { it.isFaceUp }.toBooleanArray())
+            savedState.putBooleanArray("isMatched", cards.map { it.isMatched }.toBooleanArray())
+            savedState.putInt("indexOfSingleSelectedCard", indexOfSingleSelectedCard ?: -1)
+            savedState.putBooleanArray("isBlocked", cards.map { it.isBlocked }.toBooleanArray())
+            savedState.putIntArray(
+                "AvailableReveals",
+                cards.map { it.AvailableReveals }.toIntArray()
+            )
+            savedState.putInt("indexOfSingleSelectedCard", indexOfSingleSelectedCard ?: -1)
+        } catch (e: Exception) {
+            Log.e("SingleGameLogic", "Error saving state", e)
+            FirebaseCrashlytics.getInstance().recordException(e)
+        }
     }
 
-    override fun restoreState(savedInstanceState: Bundle) {
-        val identifiers = savedInstanceState.getIntArray("cardIdentifiers")
-        val isFaceUp = savedInstanceState.getBooleanArray("isFaceUp")
-        val isMatched = savedInstanceState.getBooleanArray("isMatched")
-        val isBlocked = savedInstanceState.getBooleanArray("isBlocked")
-        val AvailableReveals = savedInstanceState.getIntArray("AvailableReveals")
-        if (identifiers != null && isFaceUp != null && isMatched != null && isBlocked != null && AvailableReveals != null) {
-            val savedCards = mutableListOf<MemoryCard>()
-            for (index in identifiers.indices) {
-                val card = MemoryCard(
-                    identifier = identifiers[index],
-                    isFaceUp = isFaceUp[index],
-                    isMatched = isMatched[index],
-                    isBlocked = isBlocked[index],
-                    AvailableReveals = AvailableReveals[index]
-                )
-                savedCards.add(card)
-            }
-            cards = savedCards
-        }
 
-        indexOfSingleSelectedCard = savedInstanceState.getInt("indexOfSingleSelectedCard").takeIf { it != -1 }
-        updateViews()
+    override fun restoreState(savedInstanceState: Bundle) {
+        try {
+            val identifiers = savedInstanceState.getIntArray("cardIdentifiers")
+            val isFaceUp = savedInstanceState.getBooleanArray("isFaceUp")
+            val isMatched = savedInstanceState.getBooleanArray("isMatched")
+            val isBlocked = savedInstanceState.getBooleanArray("isBlocked")
+            val AvailableReveals = savedInstanceState.getIntArray("AvailableReveals")
+            if (identifiers != null && isFaceUp != null && isMatched != null && isBlocked != null && AvailableReveals != null) {
+                val savedCards = mutableListOf<MemoryCard>()
+                for (index in identifiers.indices) {
+                    val card = MemoryCard(
+                        identifier = identifiers[index],
+                        isFaceUp = isFaceUp[index],
+                        isMatched = isMatched[index],
+                        isBlocked = isBlocked[index],
+                        AvailableReveals = AvailableReveals[index]
+                    )
+                    savedCards.add(card)
+                }
+                cards = savedCards
+            }
+
+            indexOfSingleSelectedCard =
+                savedInstanceState.getInt("indexOfSingleSelectedCard").takeIf { it != -1 }
+            updateViews()
+        } catch (e: Exception) {
+            Log.e("SingleGameLogic", "Error restoring state", e)
+            FirebaseCrashlytics.getInstance().recordException(e)
+        }
     }
 
     private fun restoreCards() {
-        cards.forEach { card ->
-            if (!card.isMatched && card.isFaceUp) {
-                card.isFaceUp = false
-                if (round == 3) {
-                    card.AvailableReveals--
-                    if (card.AvailableReveals == 0) {
-                        blockCard(cards.indexOf(card))
+        try {
+            cards.forEach { card ->
+                if (!card.isMatched && card.isFaceUp) {
+                    card.isFaceUp = false
+                    if (round == 3) {
+                        card.AvailableReveals--
+                        if (card.AvailableReveals == 0) {
+                            blockCard(cards.indexOf(card))
+                        }
                     }
                 }
             }
+            updateViews()
+        } catch (e: Exception) {
+            Log.e("SingleGameLogic", "Error restoring cards", e)
+            FirebaseCrashlytics.getInstance().recordException(e)
         }
-        updateViews()
     }
 
     private fun checkForMatch(position1: Int, position2: Int) {
-        if (cards[position1].identifier == cards[position2].identifier) {
-            cards[position1].isMatched = true
-            cards[position2].isMatched = true
-            ToastContextCallback("Match found!")
-        } else {
+        try {
+            if (cards[position1].identifier == cards[position2].identifier) {
+                cards[position1].isMatched = true
+                cards[position2].isMatched = true
+                ToastContextCallback("Match found!")
+            } else {
                 handler.postDelayed({
                     cards[position1].isFaceUp = false
                     cards[position2].isFaceUp = false
@@ -193,40 +241,85 @@ class SingleGameLogic(
                     }
                     updateViews()
                 }, 350)
+            }
+        } catch (e: Exception) {
+            Log.e("SingleGameLogic", "Error checking for match", e)
+            FirebaseCrashlytics.getInstance().recordException(e)
         }
     }
 
     private fun updateViews() {
-        updateViewsCallback(cards)
-    }
+        try {
 
-    private fun checkAllMatched() {
-        if (cards.all { it.isMatched }) {
-            onAllCardsMatchedCallback()
+
+            updateViewsCallback(cards)
+        } catch (e: Exception) {
+            Log.e("SingleGameLogic", "Error updating View", e)
+            FirebaseCrashlytics.getInstance().recordException(e)
         }
     }
 
-    override fun getCards(): List<MemoryCard> = cards
+    private fun checkAllMatched() {
+        try {
+            if (cards.all { it.isMatched }) {
+                onAllCardsMatchedCallback()
+            }
+        } catch (e: Exception) {
+            Log.e("SingleGameLogic", "Error checking all match", e)
+            FirebaseCrashlytics.getInstance().recordException(e)
+        }
+    }
+
+
+    override fun getCards(): List<MemoryCard> {
+        return try {
+            cards
+        } catch (e: Exception) {
+            Log.e("SingleGameLogic", "Error getting cards", e)
+            FirebaseCrashlytics.getInstance().recordException(e)
+            emptyList()
+        }
+    }
 
     override fun determineWinner(): Int? {
-        return null // Single player game does not determine a winner
+        return try {
+            return null // Single player game does not determine a winner
+        } catch (e: Exception) {
+            Log.e("SingleGameLogic", "Error determing winner", e)
+            FirebaseCrashlytics.getInstance().recordException(e)
+            0
+        }
     }
 
     override fun getScore(player: String): Int {
-        return 0 // Single player game does not determine a winner
+        return try {
+            return 0 // Single player game does not determine a winner
+        } catch (e: Exception) {
+            Log.e("SingleGameLogic", "Error getting score", e)
+            FirebaseCrashlytics.getInstance().recordException(e)
+            0
+        }
     }
-    private fun blockCard(position: Int) { //blocca temporaneamente la carta
-        if (cards[position].isBlocked) return
-        cards[position].isBlocked = true
-        updateViews()
-        object : CountDownTimer(4000, 10) {
-            override fun onTick(millisUntilFinished: Long) {}
 
-            override fun onFinish() {
-                cards[position].isBlocked = false
-                cards[position].AvailableReveals = 2
-                updateViews()
-            }
-        }.start()
+    private fun blockCard(position: Int) {
+        try {
+            if (cards[position].isBlocked) return
+            cards[position].isBlocked = true
+            updateViews()
+            object : CountDownTimer(4000, 10) {
+                override fun onTick(millisUntilFinished: Long) {}
+
+                override fun onFinish() {
+                    cards[position].isBlocked = false
+                    cards[position].AvailableReveals = 2
+                    updateViews()
+                }
+            }.start()
+        } catch (e: Exception) {
+            Log.e("SingleGameLogic", "Error blocking card", e)
+            FirebaseCrashlytics.getInstance().recordException(e)
+        }
     }
 }
+
+

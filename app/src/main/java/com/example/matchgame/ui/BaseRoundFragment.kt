@@ -18,6 +18,7 @@ import com.example.matchgame.adapter.CardAdapter
 import com.example.matchgame.telemetry.DataCollector
 import androidx.navigation.fragment.findNavController
 import com.example.matchgame.logic.IGameLogic
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 
 abstract class BaseRoundFragment : Fragment() {
 
@@ -68,7 +69,8 @@ abstract class BaseRoundFragment : Fragment() {
 
             view
         } catch (e: Exception) {
-            DataCollector.logError("Errore durante onCreateView di BaseRoundFragment: ${e.message}")
+            Log.e("BaseRoundFragment","Error onCreateView",e)
+            FirebaseCrashlytics.getInstance().recordException(e)
             null
         }
     }
@@ -92,9 +94,9 @@ abstract class BaseRoundFragment : Fragment() {
                 timerTextView?.visibility = View.GONE
             }
 
-        } catch (e: Exception) {
-            DataCollector.logError("Errore durante onViewCreated di BaseRoundFragment: ${e.message}")
-        }
+        }catch (e: Exception) {
+            Log.e("BaseRoundFragment","Error onViewCreated",e)
+            FirebaseCrashlytics.getInstance().recordException(e)}
     }
 
     override fun onDestroyView() {
@@ -106,16 +108,16 @@ abstract class BaseRoundFragment : Fragment() {
             sendButtonClickDataToFirebase()
 
         } catch (e: Exception) {
-            DataCollector.logError("Errore durante onDestroyView di BaseRoundFragment: ${e.message}")
-        }
+            Log.e("BaseRoundFragment","Error onDestroyView",e)
+            FirebaseCrashlytics.getInstance().recordException(e)}
     }
 
     protected fun updateViews(cards: List<MemoryCard>) { //delego l'aggiornamento delle carte alla classe Adapter
         try {
             cardAdapter.updateCards(cards)
         } catch (e: Exception) {
-            DataCollector.logError("Errore durante updateViews di BaseRoundFragment: ${e.message}")
-        }
+            Log.e("BaseRoundFragment","Errore updating views",e)
+            FirebaseCrashlytics.getInstance().recordException(e)}
     }
 
     protected fun setupRecyclerView() {
@@ -124,8 +126,8 @@ abstract class BaseRoundFragment : Fragment() {
             val spanCount = if (orientation == Configuration.ORIENTATION_PORTRAIT) 2 else 4 // Adjust based on your design
             recyclerView.layoutManager = GridLayoutManager(context, spanCount, GridLayoutManager.VERTICAL, false)
         } catch (e: Exception) {
-            DataCollector.logError("Errore durante setupRecyclerView di BaseRoundFragment: ${e.message}")
-        }
+            Log.e("BaseRoundFragment","Error onCreateView",e)
+            FirebaseCrashlytics.getInstance().recordException(e) }
     }
 
 
@@ -148,17 +150,17 @@ abstract class BaseRoundFragment : Fragment() {
                 DataCollector.logTotalGameDuration(totalGameDuration)
             }*/
 
-        } catch (e: Exception) {
-            DataCollector.logError("Errore durante onAllCardsMatched di BaseRoundFragment: ${e.message}")
-        }
+        }catch (e: Exception) {
+            Log.e("BaseRoundFragment","Error matching all cards",e)
+            FirebaseCrashlytics.getInstance().recordException(e)}
     }
 
     protected fun showToast(message: String) { //mostra i Toast provenienti dal GameLogic
         try {
             Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
         } catch (e: Exception) {
-            DataCollector.logError("Errore durante showToast di BaseRoundFragment: ${e.message}")
-        }
+            Log.e("BaseRoundFragment","Error showing toast",e)
+            FirebaseCrashlytics.getInstance().recordException(e)}
     }
 
     private fun startTimer(timeInMillis: Long) {
@@ -181,18 +183,28 @@ abstract class BaseRoundFragment : Fragment() {
                 }
             }.start() // Avviamo il timer
         } catch (e: Exception) {
-            DataCollector.logError("Errore durante startTimer di BaseRoundFragment: ${e.message}")
-        }
+            Log.e("BaseRoundFragment","Error starting time",e)
+            FirebaseCrashlytics.getInstance().recordException(e) }
     }
     fun pauseTimer() {
+        try{
         timer?.cancel()
         isPaused = true
+    }catch (e: Exception) {
+            Log.e("BaseRoundFragment", "Error stopping timer", e)
+            FirebaseCrashlytics.getInstance().recordException(e)
+        }
     }
 
     fun resumeTimer() {
-        if (isPaused) {
-            startTimer(timeRemaining)
-            isPaused = false
+        try {
+            if (isPaused) {
+                startTimer(timeRemaining)
+                isPaused = false
+            }
+        } catch (e: Exception) {
+            Log.e("BaseRoundFragment", "Error resuming timer", e)
+            FirebaseCrashlytics.getInstance().recordException(e)
         }
     }
     /*override fun onPause() {
@@ -215,8 +227,8 @@ abstract class BaseRoundFragment : Fragment() {
             // Save the remaining time
             savedState.putLong("timeRemaining", timeRemaining)
         } catch (e: Exception) {
-            DataCollector.logError("Errore durante onSaveInstanceState di BaseRoundFragment: ${e.message}")
-        }
+            Log.e("BaseRoundFragment","Error saving the instance state",e)
+            FirebaseCrashlytics.getInstance().recordException(e)}
     }
 
     abstract fun createGameLogic(): IGameLogic

@@ -1,16 +1,23 @@
 package com.example.matchgame.ui
 
+import android.util.Log
 import androidx.navigation.fragment.findNavController
 import com.example.matchgame.R
 
 import com.example.matchgame.logic.IGameLogic
 import com.example.matchgame.logic.SingleGameLogic
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 
 
 class Round3Fragment : BaseRoundFragment() {
     private val availableRevealsForCard = mutableMapOf<Int, Int>()
     override fun createGameLogic(): IGameLogic {
+        return try{
         return SingleGameLogic(::updateViews, ::onAllCardsMatched, this::showToast, 3, getNumberOfCards())
+    }catch (e: Exception) {
+            Log.e("Round3Fragment", "Error creating game logic", e)
+            FirebaseCrashlytics.getInstance().recordException(e)
+            throw e}
     }
 
     override fun getLayoutId(): Int {
@@ -35,20 +42,30 @@ class Round3Fragment : BaseRoundFragment() {
     }
 
     override fun onCardClicked(position: Int) {
-        val reveals = availableRevealsForCard[position] ?: 0
-        if (reveals >= 2) { // Se una carta è già scoperta due volte, devo attendere
-        } else {
-            logButtonClick(position) // Log the button click
-            gameLogic.onCardClicked(position)
+        try {
+            val reveals = availableRevealsForCard[position] ?: 0
+            if (reveals >= 2) { // Se una carta è già scoperta due volte, devo attendere
+            } else {
+                logButtonClick(position) // Log the button click
+                gameLogic.onCardClicked(position)
+            }
+        } catch (e: Exception) {
+            Log.e("Round3Fragment", "Error Clicking cards", e)
+            FirebaseCrashlytics.getInstance().recordException(e)
         }
     }
 
     override fun onAllCardsMatched() {
-        super.onAllCardsMatched()
+        try {
+            super.onAllCardsMatched()
 
-        // Visualizziamo il fragment: YouLoseFragment
-        findNavController().navigate(R.id.action_round3Fragment_to_youWinFragment)
+            // Visualizziamo il fragment: YouLoseFragment
+            findNavController().navigate(R.id.action_round3Fragment_to_youWinFragment)
 
+        } catch (e: Exception) {
+            Log.e("Round3Fragment", "Error on all cards matched", e)
+            FirebaseCrashlytics.getInstance().recordException(e)
+        }
     }
 }
 

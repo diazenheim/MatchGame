@@ -5,10 +5,25 @@ import com.example.matchgame.R
 import androidx.navigation.fragment.findNavController
 import com.example.matchgame.logic.IGameLogic
 import com.example.matchgame.logic.SingleGameLogic
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 
 class Round2Fragment : BaseRoundFragment() {
     override fun createGameLogic(): IGameLogic {
-        return SingleGameLogic(::updateViews, ::onAllCardsMatched, this::showToast, 2, getNumberOfCards())
+        return try {
+
+
+            return SingleGameLogic(
+                ::updateViews,
+                ::onAllCardsMatched,
+                this::showToast,
+                2,
+                getNumberOfCards()
+            )
+        } catch (e: Exception) {
+            Log.e("Round2Fragment", "Error creating game logic", e)
+            FirebaseCrashlytics.getInstance().recordException(e)
+            throw e
+        }
     }
 
     override fun getLayoutId(): Int {
@@ -33,14 +48,25 @@ class Round2Fragment : BaseRoundFragment() {
     }
 
     override fun onCardClicked(position: Int) {
-        logButtonClick(position) // Log the button click
-        gameLogic.onCardClicked(position)
+        try {
+
+            logButtonClick(position) // Log the button click
+            gameLogic.onCardClicked(position)
+        } catch (e: Exception) {
+            Log.e("Round2Fragment", "Error clicking cards", e)
+            FirebaseCrashlytics.getInstance().recordException(e)
+        }
     }
 
     override fun onAllCardsMatched() {
-        super.onAllCardsMatched()
-        // Usa il NavController per navigare al round successivo
-        findNavController().navigate(R.id.action_round2Fragment_to_round3Fragment)
-        Log.d("Round2Fragment", "Dove sono")
+        try {
+            super.onAllCardsMatched()
+            // Usa il NavController per navigare al round successivo
+            findNavController().navigate(R.id.action_round2Fragment_to_round3Fragment)
+            Log.d("Round2Fragment", "Dove sono")
+        } catch (e: Exception) {
+            Log.e("Round2Fragment", "Error on all card matched", e)
+            FirebaseCrashlytics.getInstance().recordException(e)
+        }
     }
 }

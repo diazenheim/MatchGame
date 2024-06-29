@@ -1,6 +1,7 @@
 package com.example.matchgame.ui
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,6 +11,7 @@ import androidx.navigation.fragment.findNavController
 import com.example.matchgame.MainActivity
 import com.example.matchgame.R
 import com.example.matchgame.telemetry.DataCollector
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 
 //Quando l'utente vince il gioco, si visualizza questo fragment
 class YouLoseFragment : Fragment() {
@@ -20,13 +22,19 @@ class YouLoseFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        val view = inflater.inflate(R.layout.youlose_layout, container, false)
+        return try {
+            // Inflate the layout for this fragment
+            val view = inflater.inflate(R.layout.youlose_layout, container, false)
 
-        DataCollector.logGameEnd("lose")
+            DataCollector.logGameEnd("lose")
 
-        logTotalGameDuration()
-        return view
+            logTotalGameDuration()
+            return view
+        } catch (e: Exception) {
+            Log.e("YouLoseFragment", "Error creating view", e)
+            FirebaseCrashlytics.getInstance().recordException(e)
+            null
+        }
     }
 
     private fun logTotalGameDuration() {
@@ -35,15 +43,21 @@ class YouLoseFragment : Fragment() {
             val totalGameDuration = (endTime - BaseRoundFragment.gameStartTime) / 1000 // Convert milliseconds to seconds
             DataCollector.logTotalGameDuration(totalGameDuration) // Log total game duration
         } catch (e: Exception) {
-            DataCollector.logError("Errore durante logTotalGameDuration di YouLoseFragment: ${e.message}")
-        }
+            Log.e("YouLoseFragment", "Error logging total game duration", e)
+            FirebaseCrashlytics.getInstance().recordException(e)}
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        val homeButton: ImageButton = view.findViewById(R.id.homebutton)//Questo button serve per tornare alla home
-        homeButton.setOnClickListener {
-            findNavController().navigate(R.id.action_youLoseFragment_to_homeFragment)
+        try {
+            super.onViewCreated(view, savedInstanceState)
+            val homeButton: ImageButton =
+                view.findViewById(R.id.homebutton)//Questo button serve per tornare alla home
+            homeButton.setOnClickListener {
+                findNavController().navigate(R.id.action_youLoseFragment_to_homeFragment)
+            }
+        } catch (e: Exception) {
+            Log.e("YouLoseFragment", "Error on view created", e)
+            FirebaseCrashlytics.getInstance().recordException(e)
         }
     }
 }

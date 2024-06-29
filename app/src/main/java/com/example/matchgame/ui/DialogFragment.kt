@@ -1,6 +1,7 @@
 package com.example.matchgame.ui
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,18 +10,25 @@ import android.widget.ImageButton
 import androidx.fragment.app.DialogFragment
 import androidx.navigation.fragment.findNavController
 import com.example.matchgame.R
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 
 class DialogFragment : DialogFragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View? {return try{
         dialog?.window?.setBackgroundDrawableResource(android.R.color.transparent)
         return inflater.inflate(R.layout.dialog_menu, container, false)
+    }catch(e:Exception){
+        Log.e("DialogFragment","Error creating View",e)
+        FirebaseCrashlytics.getInstance().recordException(e)
+        null
+    }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        try{
         super.onViewCreated(view, savedInstanceState)
         val resume_button: ImageButton = view.findViewById(R.id.resume_button)
         resume_button.setOnClickListener {
@@ -33,13 +41,21 @@ class DialogFragment : DialogFragment() {
             dismiss()
         }
 
+    }catch(e:Exception) {
+            Log.e("DialogFragment", "Error on View created", e)
+            FirebaseCrashlytics.getInstance().recordException(e)
+        }
     }
-    override fun onStart() {
+    override fun onStart() {try{
         super.onStart()
         dialog?.window?.setLayout(
             ViewGroup.LayoutParams.WRAP_CONTENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
         )
+    }catch(e:Exception) {
+        Log.e("DialogFragment", "Error starting", e)
+        FirebaseCrashlytics.getInstance().recordException(e)
+    }
     }
 
     override fun onDestroyView() {

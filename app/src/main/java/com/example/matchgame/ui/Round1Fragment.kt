@@ -1,14 +1,28 @@
 package com.example.matchgame.ui
 
 
+import android.util.Log
 import com.example.matchgame.R
 import androidx.navigation.fragment.findNavController
 import com.example.matchgame.logic.IGameLogic
 import com.example.matchgame.logic.SingleGameLogic
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 
 class Round1Fragment : BaseRoundFragment() {
     override fun createGameLogic(): IGameLogic {
-        return SingleGameLogic(::updateViews, ::onAllCardsMatched, this::showToast, 1, getNumberOfCards())
+        return try {
+            return SingleGameLogic(
+                ::updateViews,
+                ::onAllCardsMatched,
+                this::showToast,
+                1,
+                getNumberOfCards()
+            )
+        } catch (e: Exception) {
+            Log.e("Round1Fragment", "Error creating game logic", e)
+            FirebaseCrashlytics.getInstance().recordException(e)
+            throw e
+        }
     }
 
     override fun getLayoutId(): Int {
@@ -33,15 +47,25 @@ class Round1Fragment : BaseRoundFragment() {
     }
 
     override fun onCardClicked(position: Int) {
-        logButtonClick(position) // Log the button click
-        gameLogic.onCardClicked(position)
+        try {
+            logButtonClick(position) // Log the button click
+            gameLogic.onCardClicked(position)
+        } catch (e: Exception) {
+            Log.e("Round1Fragment", "Error clicking cards", e)
+            FirebaseCrashlytics.getInstance().recordException(e)
+        }
     }
 
     override fun onAllCardsMatched() {
-        super.onAllCardsMatched()
+        try {
+            super.onAllCardsMatched()
 
-        // Visualizziamo il fragment: YouLoseFragment
-        findNavController().navigate(R.id.action_round1Fragment_to_round2Fragment)
+            // Visualizziamo il fragment: YouLoseFragment
+            findNavController().navigate(R.id.action_round1Fragment_to_round2Fragment)
+        } catch (e: Exception) {
+            Log.e("Round1Fragment", "Error matching all card", e)
+            FirebaseCrashlytics.getInstance().recordException(e)
+        }
     }
 
 }

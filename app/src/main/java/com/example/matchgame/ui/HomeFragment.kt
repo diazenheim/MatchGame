@@ -13,6 +13,7 @@ import android.util.Log
 import android.view.ContextThemeWrapper
 import android.widget.PopupMenu
 import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 
 class HomeFragment : Fragment() {
 
@@ -45,9 +46,9 @@ class HomeFragment : Fragment() {
                     val clickPlayButton = (System.currentTimeMillis() - startHomeFragmentTime) / 1000.0
                     DataCollector.logClickPlayButtonTime(clickPlayButton, "single-player")
                     findNavController().navigate(R.id.action_homeFragment_to_round1Fragment)
-                }catch(e: Exception){
-                    DataCollector.logError("Errore durante il click del playButton: ${e.message}")
-                }
+                }catch(e:Exception){
+                    Log.e("HomeFragment","Error setting on the solo play button",e)
+                    FirebaseCrashlytics.getInstance().recordException(e)}
             }
             playMultiplayerButton.setOnClickListener {
                 try {
@@ -57,21 +58,22 @@ class HomeFragment : Fragment() {
                     val clickPlayMultiButton = (System.currentTimeMillis() - startHomeFragmentTime) / 1000.0
                     DataCollector.logClickPlayButtonTime(clickPlayMultiButton, "multiplayer")
                     findNavController().navigate(R.id.action_homeFragment_to_multiplayerFragment)
-                }catch(e: Exception){
-                    DataCollector.logError("Errore durante il click del playButton: ${e.message}")
-                }
+                }catch(e:Exception){
+                    Log.e("HomeFragment","Error setting on the multiplay button",e)
+                    FirebaseCrashlytics.getInstance().recordException(e)}
+
             }
             menuButton.setOnClickListener {
                 try {
                     showPopupMenu(it)
                 }
-                catch(e: Exception){
-                    DataCollector.logError("Errore durante il click del playButton: ${e.message}")
-                }
+                catch(e:Exception){
+                    Log.e("HomeFragment","Error setting on the menu button",e)
+                    FirebaseCrashlytics.getInstance().recordException(e)}
             }
-        } catch (e: Exception) {
-            DataCollector.logError("Errore durante onViewCreated: ${e.message}")
-        }
+        } catch(e:Exception){
+            Log.e("HomeFragment","Error creating View",e)
+            FirebaseCrashlytics.getInstance().recordException(e)}
     }
     private fun showPopupMenu(anchor: View) {
         val popupMenu = PopupMenu(ContextThemeWrapper(requireContext(), R.style.CustomPopupMenu), anchor)
@@ -84,9 +86,9 @@ class HomeFragment : Fragment() {
                     findNavController().navigate(R.id.action_homeFragment_to_aboutFragment)
 
                 }
-                catch(e: Exception){
-                    DataCollector.logError("Errore durante il click dell'about button: ${e.message}")
-                }
+                    catch(e:Exception){
+                        Log.e("HomeFragment","Error clicking about",e)
+                        FirebaseCrashlytics.getInstance().recordException(e)}
                 true}
                 R.id.info -> {
                     // Handle choice three
@@ -95,9 +97,9 @@ class HomeFragment : Fragment() {
 
                         findNavController().navigate(R.id.action_homeFragment_to_infoFragment)
 
-                    } catch (e: Exception) {
-                        DataCollector.logError("Errore durante il click dell'info button: ${e.message}")
-                    }
+                    } catch(e:Exception){
+                        Log.e("HomeFragment","Error clicking info",e)
+                        FirebaseCrashlytics.getInstance().recordException(e)}
                     true
                 }else -> false
             }

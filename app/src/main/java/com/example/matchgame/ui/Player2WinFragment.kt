@@ -11,6 +11,7 @@ import androidx.navigation.fragment.findNavController
 import com.example.matchgame.MainActivity
 import com.example.matchgame.R
 import com.example.matchgame.telemetry.DataCollector
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 
 class Player2WinFragment : Fragment() {
 
@@ -18,18 +19,30 @@ class Player2WinFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.player2wins_layout, container, false)
+        return try {
+            val view = inflater.inflate(R.layout.player2wins_layout, container, false)
 
-        logMultiplayerCompletionTime()
-        (activity as? MainActivity)?.onGameCompleted() // Mark the game as completed
+            logMultiplayerCompletionTime()
+            (activity as? MainActivity)?.onGameCompleted() // Mark the game as completed
 
-        return view
+            return view
+        } catch (e: Exception) {
+            Log.e("Player2WinFragnment", "Error creating view", e)
+            FirebaseCrashlytics.getInstance().recordException(e)
+            null
+        }
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        val homeButton: ImageButton = view.findViewById(R.id.homebutton)//Questo button serve per tornare alla home
-        homeButton.setOnClickListener {
-            findNavController().navigate(R.id.action_player2WinFragment_to_homeFragment)
+        try {
+            super.onViewCreated(view, savedInstanceState)
+            val homeButton: ImageButton =
+                view.findViewById(R.id.homebutton)//Questo button serve per tornare alla home
+            homeButton.setOnClickListener {
+                findNavController().navigate(R.id.action_player2WinFragment_to_homeFragment)
+            }
+        } catch (e: Exception) {
+            Log.e("Player2WinFragnment", "Error on view created", e)
+            FirebaseCrashlytics.getInstance().recordException(e)
         }
     }
     private fun logMultiplayerCompletionTime() {
@@ -39,7 +52,7 @@ class Player2WinFragment : Fragment() {
             DataCollector.logMultiplayerCompletionTime(durationSeconds)
             Log.d("Player2WinFragment", "Multiplayer game duration: ${durationSeconds}s")
         } catch (e: Exception) {
-            DataCollector.logError("Errore durante logMultiplayerCompletionTime di Player2WinFragment: ${e.message}")
-        }
+            Log.e("Player2WinFragnment", "Error logging multiplayer time", e)
+            FirebaseCrashlytics.getInstance().recordException(e)}
     }
 }
