@@ -28,7 +28,9 @@
         <b>Game Rules:</b><br/>
         1. The game consists of three rounds (8, 12, and 16 cards, respectively),
         each with an appropriate timer (30, 60, and 90 seconds, respectively).
-        Match pairs of Pokémon cards by flipping them. Complete each round to progress to the next.<br/><br/>
+        Match pairs of Pokémon cards by flipping them. Complete each round to progress to the next.
+        Cards flipped twice block for 3 seconds (blocked cards are temporarily unclickable) inside round 3.
+        <br/><br/>
 
         2. Multiplayer mode allows you to play against another player.
         There&#39;s one round with 22 cards, and two players can play on the same device.
