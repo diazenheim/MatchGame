@@ -31,6 +31,7 @@ This project includes:
 2. Gameplay:
     1. The game consists of three rounds (8, 12, and 16 cards, respectively), each with an appropriate timer (30, 60, and 90 seconds, respectively).
     2. Match pairs of Pokémon cards by flipping them. Complete each round to progress to the next.
+    3. The third round has a new feature: cards flipped twice block for 3 seconds (blocked cards are temporarily unclickable).
 
 ### Multiplayer Mode
 1. Start the game and select "Multiplayer" from the main menu.
