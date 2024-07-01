@@ -9,38 +9,26 @@ import android.os.Bundle
 import android.util.Log
 import com.google.firebase.analytics.FirebaseAnalytics
 
-
+// Object for collecting and logging telemetry data to Firebase
 object DataCollector {
 
     private lateinit var appContext: Context
     private lateinit var firebaseAnalytics: FirebaseAnalytics
 
+    // Initialize the DataCollector with application context and FirebaseAnalytics instance
     fun initialize(context: Context){
         appContext = context.applicationContext
         firebaseAnalytics=FirebaseAnalytics.getInstance(appContext)
     }
-    fun trackButton(buttonName: String) {
-        ensureInitialized()
-        val bundle = Bundle().apply {
-            putString(FirebaseAnalytics.Param.ITEM_NAME, buttonName)
-            putString("custom_param", "button_click")
-        }
-        firebaseAnalytics.logEvent("button_click", bundle)
-    }
 
+    // Log an event to Firebase Analytics
     private fun logEvent(eventName: String, params: Bundle? = null) {
         ensureInitialized()
         firebaseAnalytics.logEvent(eventName, params)
         Log.d("DataCollector", "sent data to firebase console")
     }
 
-    fun logGameStart() {
-        val bundle = Bundle().apply {
-            putString(FirebaseAnalytics.Param.METHOD, "game_start")
-        }
-        logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle)
-    }
-
+    // Log the end of the game with the result
     fun logGameEnd(result: String) {
         val bundle = Bundle().apply {
             putString("game_result", result)
@@ -48,15 +36,8 @@ object DataCollector {
         logEvent("game_end", bundle)
     }
 
-    fun logCardFlipped(cardId: Int) {
-        val bundle = Bundle().apply {
-            putInt("card_id", cardId)
-        }
-        logEvent("card_flipped", bundle)
-    }
-
-    //Track the time taken to complete each level or round.
-    // Useful to understand the difficulty of each level.
+    // Log the time taken to complete a level or round
+    // Useful to understand the difficulty of each level
     fun logLevelCompletionTime(level: Int, timeTakenSeconds: Long) {
         val bundle = Bundle().apply {
             putInt("level", level)
@@ -65,42 +46,14 @@ object DataCollector {
         logEvent("level_completion_time", bundle)
     }
 
-    //Track the number of attempts a user takes to complete a level or round.
-    // Helps in analyzing user engagement and the game's difficulty.
-    fun logNumberOfAttempts(level: Int, attempts: Int) {
-        val bundle = Bundle().apply {
-            putInt("level", level)
-            putInt("attempts", attempts)
-        }
-        logEvent("number_of_attempts", bundle)
-    }
 
-
-    //Track clicks on various buttons like menu buttons, retry, next level, etc.
-    //Useful for UI/UX analysis.
-    fun logButtonClick(buttonName: String) {
-        val bundle = Bundle().apply {
-            putString("button_name", buttonName)
-        }
-        logEvent("button_click", bundle)
-    }
-
-    //Log any errors or exceptions that occur.
-    //Helps in debugging and improving the app's stability.
-    fun logError(errorMessage: String) {
-        val bundle = Bundle().apply {
-            putString("error_message", errorMessage)
-        }
-        logEvent("error_occurred", bundle)
-    }
-
-    //Track user properties such as device type, OS version, and user demographics.
-    //Useful for segmenting your user base.
+    // Set a user property for segmenting the user base
     fun setUserProperty(propertyName: String, propertyValue: String) {
         ensureInitialized()
         firebaseAnalytics.setUserProperty(propertyName, propertyValue)
     }
 
+    // Log RAM usage data
     fun logRAMUsage() {
         val memoryInfo = getMemoryUsage()
         val availMemMB = memoryInfo.availMem / 1024.0 / 1024.0 // Convert to MB
@@ -113,6 +66,7 @@ object DataCollector {
         logEvent("memory_usage", bundle)
     }
 
+    // Get memory usage information
     private fun getMemoryUsage(): ActivityManager.MemoryInfo {
         val activityManager = appContext.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
         val memoryInfo = ActivityManager.MemoryInfo()
@@ -120,6 +74,7 @@ object DataCollector {
         return memoryInfo
     }
 
+    // Log the total game duration
     fun logTotalGameDuration(totalTimeSeconds: Long) {
         val bundle = Bundle().apply {
             putLong("total_game_duration", totalTimeSeconds)
@@ -127,13 +82,14 @@ object DataCollector {
         logEvent("total_game_duration", bundle)
     }
 
-
+    // Ensure Firebase Analytics is initialized
     private fun ensureInitialized(){
         if(!::firebaseAnalytics.isInitialized){
             throw  UninitializedPropertyAccessException("Firebase must be initialized")
         }
     }
 
+    // Get the current battery percentage
     fun getBatteryPercentage(context: Context): Int {
         val intentFilter = IntentFilter(Intent.ACTION_BATTERY_CHANGED)
         val batteryStatus = context.registerReceiver(null, intentFilter)
@@ -144,7 +100,7 @@ object DataCollector {
         return batteryPercentage
     }
 
-
+    // Log battery usage data
     fun logBatteryUsage(initialBatteryPercentage: Int, endBatteryPercentage: Int) {
         val bundle = Bundle().apply {
             putInt("initial_battery_percentage", initialBatteryPercentage)
@@ -155,17 +111,7 @@ object DataCollector {
         logEvent("battery_usage", bundle)
     }
 
-    //Log when a user exits a game before completion.
-    //Provides insights into user drop-off points.
-    fun logGameAbandonment(round: Int) {
-        val bundle = Bundle().apply {
-            putInt("abandoned_round", round)
-        }
-        logEvent("game_abandonment", bundle)
-        Log.d("DataCollector", "Logging game abandonment at round $round")
-    }
-
-
+    // Log the number of button clicks in a round
     fun logButtonClickCounts(level: Int, buttonClickCounts: Map<Int, Int>) {
         val params = Bundle().apply {
             buttonClickCounts.forEach { (buttonIndex, clickCount) ->
@@ -176,7 +122,7 @@ object DataCollector {
     }
 
 
-    //Logs the launch time to Firebase
+    // Log the app launch time
     fun logAppLaunchTime(launchTime: Double) {
         val bundle = Bundle().apply {
             putDouble("app_launch_time_seconds", launchTime)
@@ -184,6 +130,7 @@ object DataCollector {
         logEvent("app_launch_time", bundle)
     }
 
+    // Log the time when the play button is clicked (single player or multiplayer)
     fun logClickPlayButtonTime(launchTime: Double, string: String) {
         val bundle = Bundle().apply {
             putDouble("click_play_button_seconds", launchTime)
@@ -193,7 +140,7 @@ object DataCollector {
     }
 
 
-    // Method to log the average time between card flips
+    // Log the average time between card flips
     fun logAverageTimeBetweenClicks(level: Int, averageTime: Double) {
         val bundle = Bundle().apply {
             putDouble("average_time_between_clicks_seconds", averageTime)
@@ -201,7 +148,7 @@ object DataCollector {
         logEvent("round${level}_average_time_between_clicks", bundle)
     }
 
-
+    // Log the time taken to complete a multiplayer game
     fun logMultiplayerCompletionTime(timeTakenSeconds: Long) {
         val bundle = Bundle().apply {
             putString("level", "multiplayer")
@@ -211,6 +158,7 @@ object DataCollector {
         Log.d("DataCollector", "Logged multiplayer_level_completion_time: level=multiplayer, time_taken_seconds=$timeTakenSeconds")
     }
 
+    // Log the number of button clicks in a multiplayer game
     fun logMultiplayerButtonClickCounts(buttonClickCounts: Map<Int, Int>) {
         val params = Bundle().apply {
             buttonClickCounts.forEach { (buttonIndex, clickCount) ->
@@ -220,14 +168,11 @@ object DataCollector {
         logEvent("multiplayer_button_clicks", params)
     }
 
-
+    // Log the average time between card flips in a multiplayer game
     fun logMultiplayerAverageTimeBetweenClicks(averageTime: Double) {
         val bundle = Bundle().apply {
             putDouble("average_time_between_clicks_seconds", averageTime)
         }
         logEvent("multiplayer_average_time_between_clicks", bundle)
     }
-
-
-
 }

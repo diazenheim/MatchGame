@@ -13,11 +13,8 @@ import com.example.matchgame.R
 import com.example.matchgame.telemetry.DataCollector
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 
-//Quando l'utente vince il gioco, si visualizza questo fragment
+// YouWinFragment displays the screen when the player wins the game
 class YouWinFragment : Fragment() {
-
-    private lateinit var dataCollector: DataCollector
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -55,7 +52,7 @@ class YouWinFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {try{
 
         super.onViewCreated(view, savedInstanceState)
-        val homeButton: ImageButton = view.findViewById(R.id.homebutton)//Questo button serve per tornare alla home
+        val homeButton: ImageButton = view.findViewById(R.id.homebutton) // Button to return to home
         homeButton.setOnClickListener {
             findNavController().navigate(R.id.action_youWinFragment_to_homeFragment)
         }

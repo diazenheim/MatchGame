@@ -1,5 +1,6 @@
 package com.example.matchgame.ui
 
+import android.content.Context
 import android.content.res.Configuration
 import android.os.Bundle
 import android.os.CountDownTimer
@@ -26,19 +27,16 @@ abstract class BaseRoundFragment : Fragment() {
         var gameStartTime: Long = 0
     }
 
-
     protected lateinit var gameLogic: IGameLogic
     protected lateinit var cardAdapter: CardAdapter
     protected lateinit var recyclerView: RecyclerView
-    protected var isGameLogicInitialized = false
-    protected lateinit var timer: CountDownTimer
+    private var isGameLogicInitialized = false
+    private lateinit var timer: CountDownTimer
     protected var timeRemaining: Long = 0 // Initialize with 0, will be set in onViewCreated
-    protected var startTime: Long = 0 // Variable to store start time
-    protected var isGameCompleted: Boolean = false // Track if the game is completed
+    private var startTime: Long = 0 // Variable to store start time
     private var isPaused: Boolean = false
     private val buttonClickCounts = mutableMapOf<Int, Int>() // Counter for button clicks
     private val buttonClickTimes = mutableListOf<Long>() // List to store button click times
-
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -48,20 +46,23 @@ abstract class BaseRoundFragment : Fragment() {
             // Inflate the layout for this fragment
             val view = inflater.inflate(getLayoutId(), container, false)
 
+            // Record the start time of the game
             startTime = System.currentTimeMillis() // Record the start time of the game
 
+            // Initialize game start time at the beginning of round 1 or multiplayer
             if (getLevel() == 1) {
                 gameStartTime = startTime // Initialize game start time at the beginning of round 1
             } else if (this is MultiplayerFragment && gameStartTime == 0L) {
                 gameStartTime = startTime // Initialize game start time at the beginning of multiplayer
             }
 
+            // Set up the RecyclerView for displaying cards
             recyclerView = view.findViewById(R.id.recyclerView_round)
             setupRecyclerView()
 
             // Only pass getCurrentPlayer if this is a MultiplayerFragment
             cardAdapter = if (this is MultiplayerFragment) {
-                CardAdapter(mutableListOf(), this::onCardClicked, (this as MultiplayerFragment)::getCurrentPlayer)
+                CardAdapter(mutableListOf(), this::onCardClicked, this::getCurrentPlayer)
             } else {
                 CardAdapter(mutableListOf(), this::onCardClicked)
             }
@@ -78,6 +79,7 @@ abstract class BaseRoundFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         try {
+            // Initialize game logic
             gameLogic = createGameLogic()
             isGameLogicInitialized = true
             timeRemaining = getTimerDuration() // Set the timeRemaining to the correct duration for the round
@@ -86,6 +88,7 @@ abstract class BaseRoundFragment : Fragment() {
                 timeRemaining = it.getLong("timeRemaining", timeRemaining) // Restore the timer state
             }
 
+            // Start the timer if not in multiplayer mode
             if (this !is MultiplayerFragment) {
                 startTimer(timeRemaining)
             } else {
@@ -93,8 +96,7 @@ abstract class BaseRoundFragment : Fragment() {
                 val timerTextView: TextView? = view.findViewById(R.id.timerTextView)
                 timerTextView?.visibility = View.GONE
             }
-
-        }catch (e: Exception) {
+        } catch (e: Exception) {
             Log.e("BaseRoundFragment","Error onViewCreated",e)
             FirebaseCrashlytics.getInstance().recordException(e)}
     }
@@ -103,7 +105,7 @@ abstract class BaseRoundFragment : Fragment() {
         super.onDestroyView()
         try {
             if (this !is MultiplayerFragment) {
-                timer.cancel() // Cancella il timer per evitare memory leaks
+                timer.cancel() // Cancel the timer to avoid memory leaks if not in multiplayer mode
             }
             sendButtonClickDataToFirebase()
 
@@ -112,7 +114,7 @@ abstract class BaseRoundFragment : Fragment() {
             FirebaseCrashlytics.getInstance().recordException(e)}
     }
 
-    protected fun updateViews(cards: List<MemoryCard>) { //delego l'aggiornamento delle carte alla classe Adapter
+    protected fun updateViews(cards: List<MemoryCard>) { // Delegate updating the cards to the adapter
         try {
             cardAdapter.updateCards(cards)
         } catch (e: Exception) {
@@ -120,6 +122,7 @@ abstract class BaseRoundFragment : Fragment() {
             FirebaseCrashlytics.getInstance().recordException(e)}
     }
 
+    // Setup RecyclerView with a GridLayoutManager based on orientation
     private fun setupRecyclerView() {
         try {
             val orientation = resources.configuration.orientation
@@ -131,31 +134,23 @@ abstract class BaseRoundFragment : Fragment() {
         }
     }
 
-
-    protected open fun onAllCardsMatched() { //quando tutte carte sono matchate avviato il fragment relativo al round successivo
+    // Called when all cards are matched to log completion time and move to the next round
+    protected open fun onAllCardsMatched() {
         try {
             val endTime = System.currentTimeMillis()
             val durationSeconds = (endTime - startTime) / 1000 // Convert milliseconds to seconds
-            //DataCollector.logLevelCompletionTime(getLevel(), durationSeconds) // Log level completion time
             if (this is MultiplayerFragment) {
                 DataCollector.logMultiplayerCompletionTime(durationSeconds)
             } else {
                 DataCollector.logLevelCompletionTime(getLevel(), durationSeconds)
             }
             Log.d("BaseRoundFragment", "onAllCardsMatched called, duration: ${durationSeconds}s")
-            isGameCompleted = true // Set the game as completed
-
-
-            /*if (getNextRoundFragment() == R.id.youWinFragment) {
-                val totalGameDuration = (endTime - gameStartTime) / 1000 // Convert milliseconds to seconds
-                DataCollector.logTotalGameDuration(totalGameDuration)
-            }*/
-
-        }catch (e: Exception) {
+        } catch (e: Exception) {
             Log.e("BaseRoundFragment","Error matching all cards",e)
             FirebaseCrashlytics.getInstance().recordException(e)}
     }
 
+    // Display a Toast message from the game logic
     protected fun showToast(message: String) { //mostra i Toast provenienti dal GameLogic
         try {
             Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
@@ -164,29 +159,30 @@ abstract class BaseRoundFragment : Fragment() {
             FirebaseCrashlytics.getInstance().recordException(e)}
     }
 
+    // Start a countdown timer for the game round
     private fun startTimer(timeInMillis: Long) {
         try {
             timer = object : CountDownTimer(timeInMillis, 1000) {
-                override fun onTick(RemainingTimeInMillis: Long) {
-                    // Aggiorna il timer ogni 1000 millisecondi(coundownInterval)
-                    timeRemaining = RemainingTimeInMillis
-                    val secondsRemaining = RemainingTimeInMillis / 1000
+                override fun onTick(remainingTimeInMillis: Long) {
+                    // Update the timer every 1000 milliseconds
+                    timeRemaining = remainingTimeInMillis
+                    val secondsRemaining = remainingTimeInMillis / 1000
                     val timerTextView: TextView? = view?.findViewById(R.id.timerTextView)
                     timerTextView?.text = getString(R.string.time_remaining, secondsRemaining)
 
                 }
 
                 override fun onFinish() {
-                    // Questo metodo viene eseguito quando il timer termina
+                    // Handle timer finishing
                     showToast("Time's up!")
-                    // Visualizziamo il fragment: YouLoseFragment
                     findNavController().navigate(R.id.youLoseFragment)
                 }
-            }.start() // Avviamo il timer
+            }.start() // Start the timer
         } catch (e: Exception) {
             Log.e("BaseRoundFragment","Error starting time",e)
             FirebaseCrashlytics.getInstance().recordException(e) }
     }
+
     fun pauseTimer() {
         try{
             timer.cancel()
@@ -208,17 +204,8 @@ abstract class BaseRoundFragment : Fragment() {
             FirebaseCrashlytics.getInstance().recordException(e)
         }
     }
-    /*override fun onPause() {
-        super.onPause()
-        if (!isGameCompleted) {
-            try {
-                DataCollector.logGameAbandonment(getLevel()) // Log game abandonment if the game is not completed
-            } catch (e: Exception) {
-                DataCollector.logError("Errore durante onPause di BaseRoundFragment: ${e.message}")
-            }
-        }
-    }*/
 
+    // Save the game state and remaining time
     override fun onSaveInstanceState(savedState: Bundle) {
         super.onSaveInstanceState(savedState)
         try {
@@ -232,6 +219,7 @@ abstract class BaseRoundFragment : Fragment() {
             FirebaseCrashlytics.getInstance().recordException(e)}
     }
 
+    // Abstract methods to be implemented by subclasses:
     abstract fun createGameLogic(): IGameLogic
     abstract fun getLayoutId(): Int
     abstract fun getLevel(): Int
@@ -257,6 +245,7 @@ abstract class BaseRoundFragment : Fragment() {
         logAverageTimeBetweenClicks()
     }
 
+    // Calculate and log average time between button clicks
     private fun logAverageTimeBetweenClicks() {
         if (buttonClickTimes.size > 1) {
             var totalTime: Long = 0
@@ -273,5 +262,4 @@ abstract class BaseRoundFragment : Fragment() {
             Log.d("BaseRoundFragment", "Average time between clicks: $averageTimeInSeconds seconds") // Log for debugging
         }
     }
-
 }

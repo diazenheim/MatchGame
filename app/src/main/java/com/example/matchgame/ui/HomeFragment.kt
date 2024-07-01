@@ -12,18 +12,13 @@ import androidx.navigation.fragment.findNavController
 import android.util.Log
 import android.view.ContextThemeWrapper
 import android.widget.PopupMenu
-import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 
 class HomeFragment : Fragment() {
-
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
-
         Log.d("mainActivity", "AppStarted")
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.home_layout, container, false)
@@ -46,19 +41,17 @@ class HomeFragment : Fragment() {
                     val clickPlayButton = (System.currentTimeMillis() - startHomeFragmentTime) / 1000.0
                     DataCollector.logClickPlayButtonTime(clickPlayButton, "single-player")
                     findNavController().navigate(R.id.action_homeFragment_to_round1Fragment)
-                }catch(e:Exception){
+                } catch(e:Exception){
                     Log.e("HomeFragment","Error setting on the solo play button",e)
                     FirebaseCrashlytics.getInstance().recordException(e)}
             }
             playMultiplayerButton.setOnClickListener {
                 try {
                     //Send how much time is used to click the playButton
-                    //val clickMultiplayerButton = (System.currentTimeMillis() - startHomeFragmentTime) / 1000.0
-                    //DataCollector.logClickPlayButtonTime(clickPlayButton)
                     val clickPlayMultiButton = (System.currentTimeMillis() - startHomeFragmentTime) / 1000.0
                     DataCollector.logClickPlayButtonTime(clickPlayMultiButton, "multiplayer")
                     findNavController().navigate(R.id.action_homeFragment_to_multiplayerFragment)
-                }catch(e:Exception){
+                } catch(e:Exception){
                     Log.e("HomeFragment","Error setting on the multiplay button",e)
                     FirebaseCrashlytics.getInstance().recordException(e)}
 
@@ -82,9 +75,7 @@ class HomeFragment : Fragment() {
             when (menuItem.itemId) {
                 R.id.about -> {
                     try{
-
                     findNavController().navigate(R.id.action_homeFragment_to_aboutFragment)
-
                 }
                     catch(e:Exception){
                         Log.e("HomeFragment","Error clicking about",e)
@@ -92,16 +83,13 @@ class HomeFragment : Fragment() {
                 true}
                 R.id.info -> {
                     // Handle choice three
-
                     try {
-
                         findNavController().navigate(R.id.action_homeFragment_to_infoFragment)
-
                     } catch(e:Exception){
                         Log.e("HomeFragment","Error clicking info",e)
                         FirebaseCrashlytics.getInstance().recordException(e)}
                     true
-                }else -> false
+                } else -> false
             }
         }
         popupMenu.show()

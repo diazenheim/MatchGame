@@ -13,6 +13,7 @@ import com.example.matchgame.R
 import com.example.matchgame.telemetry.DataCollector
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 
+// Player2WinFragment displays the screen when player 2 wins the game
 class Player2WinFragment : Fragment() {
 
     override fun onCreateView(
@@ -27,7 +28,7 @@ class Player2WinFragment : Fragment() {
 
             return view
         } catch (e: Exception) {
-            Log.e("Player2WinFragnment", "Error creating view", e)
+            Log.e("Player2WinFragment", "Error creating view", e)
             FirebaseCrashlytics.getInstance().recordException(e)
             null
         }
@@ -41,7 +42,7 @@ class Player2WinFragment : Fragment() {
                 findNavController().navigate(R.id.action_player2WinFragment_to_homeFragment)
             }
         } catch (e: Exception) {
-            Log.e("Player2WinFragnment", "Error on view created", e)
+            Log.e("Player2WinFragment", "Error on view created", e)
             FirebaseCrashlytics.getInstance().recordException(e)
         }
     }
@@ -52,7 +53,7 @@ class Player2WinFragment : Fragment() {
             DataCollector.logMultiplayerCompletionTime(durationSeconds)
             Log.d("Player2WinFragment", "Multiplayer game duration: ${durationSeconds}s")
         } catch (e: Exception) {
-            Log.e("Player2WinFragnment", "Error logging multiplayer time", e)
+            Log.e("Player2WinFragment", "Error logging multiplayer time", e)
             FirebaseCrashlytics.getInstance().recordException(e)}
     }
 }

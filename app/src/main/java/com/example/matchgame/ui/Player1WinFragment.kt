@@ -13,21 +13,22 @@ import com.example.matchgame.R
 import com.example.matchgame.telemetry.DataCollector
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 
+// Player1WinFragment displays the screen when player 1 wins the game
 class Player1WinFragment : Fragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return try{
+        return try {
         val view = inflater.inflate(R.layout.player1wins_layout, container, false)
 
         logMultiplayerCompletionTime()
         (activity as? MainActivity)?.onGameCompleted() // Mark the game as completed
 
         return view
-    }catch (e: Exception) {
-            Log.e("Player1WinFragnment", "Error creating view", e)
+    } catch (e: Exception) {
+            Log.e("Player1WinFragment", "Error creating view", e)
             FirebaseCrashlytics.getInstance().recordException(e)
             null
         }
@@ -41,7 +42,7 @@ class Player1WinFragment : Fragment() {
                 findNavController().navigate(R.id.action_player1WinFragment_to_homeFragment)
             }
         } catch (e: Exception) {
-            Log.e("Player1WinFragnment", "Error on view created", e)
+            Log.e("Player1WinFragment", "Error on view created", e)
             FirebaseCrashlytics.getInstance().recordException(e)
         }
     }
@@ -52,7 +53,7 @@ class Player1WinFragment : Fragment() {
             DataCollector.logMultiplayerCompletionTime(durationSeconds)
             Log.d("Player1WinFragment", "Multiplayer game duration: ${durationSeconds}s")
         }catch (e: Exception) {
-            Log.e("Player1WinFragnment", "Error logging completion time", e)
+            Log.e("Player1WinFragment", "Error logging completion time", e)
             FirebaseCrashlytics.getInstance().recordException(e)}
     }
 }

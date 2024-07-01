@@ -5,18 +5,12 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
-import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.example.matchgame.telemetry.DataCollector
-import com.example.matchgame.ui.HomeFragment
 import com.google.firebase.FirebaseApp
 import com.google.firebase.analytics.FirebaseAnalytics
-import androidx.navigation.ui.setupActionBarWithNavController
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import android.content.pm.PackageManager
@@ -37,11 +31,7 @@ class MainActivity : AppCompatActivity() {
     private var isGameCompleted: Boolean = false // Flag to track game completion
     private var currentRound: Int = 0 // Variable to track current round
 
-
-    //private var isPotentiallyClosing: Boolean = false // Flag to track potential closing
-
-
-    // Companion object to store the app start time
+    // Companion object to store the app start time and permission request code
     companion object {
         var appStartTime: Long = System.currentTimeMillis()
         private const val PERMISSION_REQUEST_CODE = 1
@@ -51,13 +41,13 @@ class MainActivity : AppCompatActivity() {
 
         super.onCreate(savedInstanceState)
         try {
+            // Initialize Firebase
             FirebaseApp.initializeApp(this)
-
             setContentView(R.layout.activity_main)
 
+            // Initialize Firebase Analytics and Crashlytics
             firebaseAnalytics = FirebaseAnalytics.getInstance(this)
             FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(true)
-
 
             // Initialize DataCollector
             DataCollector.initialize(this)
@@ -67,17 +57,12 @@ class MainActivity : AppCompatActivity() {
             Log.d("MainActivity", "Initial battery percentage: $initialBatteryPercentage%")
 
 
-            //intialize navigation trough nav_graph
+            // Initialize navigation through nav_graph
             val navHostFragment =
                 supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
             navController = navHostFragment.navController
 
-
-            // Log a test event to verify that events are being logged
-            //logTestEvent()
-
-
-            //Ask permission
+            // Request necessary permissions
             checkAndRequestPermissions()
 
             // Set user properties
@@ -89,10 +74,9 @@ class MainActivity : AppCompatActivity() {
             // Log the time taken to launch the app
             val launchTime = (System.currentTimeMillis() - appStartTime) / 1000.0
             DataCollector.logAppLaunchTime(launchTime)
-            //DataCollector.logInternNetworkState()
-            //DataCollector.logInternetVelocity()
 
-            Thread.setDefaultUncaughtExceptionHandler { thread, throwable ->
+            // Set a default uncaught exception handler to log exceptions to Firebase Crashlytics
+            Thread.setDefaultUncaughtExceptionHandler { _, throwable ->
                 FirebaseCrashlytics.getInstance().recordException(throwable)
             }
 
@@ -102,6 +86,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    // Set user properties for device type and OS version
     private fun setUserProperties() {
         try {
             // Track device type
@@ -118,23 +103,9 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun logTestEvent() {
-        try {
-            val bundle = Bundle().apply {
-                putString(FirebaseAnalytics.Param.ITEM_NAME, "main_activity")
-                putString("custom_param", "test_event")
-            }
-            firebaseAnalytics.logEvent("test_event", bundle)
-        } catch (e: Exception) {
-            DataCollector.logError("Errore durante l'evento di test: ${e.message}")
-            FirebaseCrashlytics.getInstance().recordException(e)
-
-        }
-    }
-
+    // Handle navigation up action
     override fun onSupportNavigateUp(): Boolean {
         return try {
-
             return navController.navigateUp() || super.onSupportNavigateUp()
         } catch (e: Exception) {
             Log.e("MainActivity", "Error on onSupportNavigateUp", e)
@@ -144,7 +115,7 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    // Add a method to log battery usage difference
+    // Log battery usage difference when the app stops
     override fun onStop() {
         super.onStop()
         try {
@@ -152,15 +123,12 @@ class MainActivity : AppCompatActivity() {
             val endBatteryPercentage = DataCollector.getBatteryPercentage(this)
             Log.d("MainActivity", "End battery percentage: $endBatteryPercentage%")
             DataCollector.logBatteryUsage(initialBatteryPercentage, endBatteryPercentage)
-
-
         } catch (e: Exception) {
             Log.e("MainActivity", "Error on stopping", e)
             FirebaseCrashlytics.getInstance().recordException(e)
 
         }
     }
-
 
     // Call this method when the game is completed
     fun onGameCompleted() {
@@ -172,27 +140,10 @@ class MainActivity : AppCompatActivity() {
         currentRound = round
     }
 
+    // Check and request necessary permissions
     private fun checkAndRequestPermissions() {
         try {
             val permissionsNeeded = mutableListOf<String>()
-
-            /*if (ContextCompat.checkSelfPermission(
-                this,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            permissionsNeeded.add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-        }
-         if (ContextCompat.checkSelfPermission(
-                this,
-                Manifest.permission.READ_EXTERNAL_STORAGE
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            permissionsNeeded.add(Manifest.permission.READ_EXTERNAL_STORAGE)
-        }
-
-         */
-
             if (ContextCompat.checkSelfPermission(
                     this,
                     Manifest.permission.INTERNET
@@ -217,8 +168,6 @@ class MainActivity : AppCompatActivity() {
             ) {
                 permissionsNeeded.add(Manifest.permission.POST_NOTIFICATIONS)
             }
-            // Aggiungi altri permessi se necessario
-
             if (permissionsNeeded.isNotEmpty()) {
                 ActivityCompat.requestPermissions(
                     this,
@@ -233,6 +182,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    // Handle the result of permission requests
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
@@ -244,16 +194,8 @@ class MainActivity : AppCompatActivity() {
                 for (i in permissions.indices) {
                     if (grantResults[i] != PackageManager.PERMISSION_GRANTED) {
                         Log.d("MainActivityPErmission", "Permesso richiesto, godo")
-                        // Il permesso non è stato concesso, gestisci di conseguenza
+                        // Permission was not granted, show a dialog explaining why it is needed
                         when (permissions[i]) {
-                            /*Manifest.permission.WRITE_EXTERNAL_STORAGE -> {
-                            showPermissionDeniedDialog("Write External Storage permission is required to save game data. Please enable it in settings.")
-                        }
-
-                        Manifest.permission.READ_EXTERNAL_STORAGE -> {
-                            showPermissionDeniedDialog("Read External Storage permission is required to read game data. Please enable it in settings.")
-                        }*/
-
                             Manifest.permission.POST_NOTIFICATIONS -> {
                                 showPermissionDeniedDialog("Notification permission is required to receive notifications. Please enable it in settings.")
                             }
@@ -276,6 +218,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    // Show a dialog explaining why the permission is needed
     private fun showPermissionDeniedDialog(message: String) {
         try {
             AlertDialog.Builder(this)
@@ -283,7 +226,7 @@ class MainActivity : AppCompatActivity() {
                 .setMessage(message)
                 .setPositiveButton("Settings") { dialog, _ ->
                     dialog.dismiss()
-                    // Apri le impostazioni dell'app per permettere all'utente di concedere i permessi manualmente
+                    // Open app settings to allow the user to enable the permission manually
                     val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
                         data = Uri.fromParts("package", packageName, null)
                     }
@@ -300,13 +243,14 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    // Handle back button press
     override fun onBackPressed() {
         try {
-            // Controlla quale fragment è attualmente visibile
+            // Check which fragment is currently visible
             val currentDestination = navController.currentDestination?.id
             if (currentDestination == R.id.multiplayerFragment) navController.navigate(R.id.dialogMenuFragment)
             else if (currentDestination == R.id.round1Fragment || currentDestination == R.id.round2Fragment || currentDestination == R.id.round3Fragment) {
-                // Naviga al DialogFragment quando il tasto "indietro" è premuto
+                // Navigate to the DialogFragment when the back button is pressed
                 navController.navigate(R.id.dialogMenuFragment)
                 val currentFragment =
                     supportFragmentManager.findFragmentById(R.id.nav_host_fragment)?.childFragmentManager?.fragments?.get(
@@ -326,7 +270,6 @@ class MainActivity : AppCompatActivity() {
         } catch (e: Exception) {
             Log.e("MainActivity", "Error onBackPressed", e)
             FirebaseCrashlytics.getInstance().recordException(e)
-
         }
     }
 }

@@ -11,6 +11,7 @@ import com.example.matchgame.R
 import com.example.matchgame.databinding.InfoLayoutBinding
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 
+// InfoFragment displays information about the application
 class InfoFragment : Fragment() {
 
     private var _binding: InfoLayoutBinding? = null

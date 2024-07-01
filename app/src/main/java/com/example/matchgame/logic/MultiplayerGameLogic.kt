@@ -9,16 +9,13 @@ import com.example.matchgame.models.MemoryCard
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 
 class MultiplayerGameLogic(
-    private val updateViewsCallback: (List<MemoryCard>) -> Unit,
-    private val onAllCardsMatchedCallback: () -> Unit,
-    private val ToastContextCallback: (String) -> Unit,
-    private val numberOfCards: Int,
-    private val currentPlayerProvider: () -> Int,
-    private val switchPlayerCallback: () -> Unit,
-
-
-
-) : IGameLogic {
+    private val updateViewsCallback: (List<MemoryCard>) -> Unit, // Callback to update the view with the current cards
+    private val onAllCardsMatchedCallback: () -> Unit, // Callback when all cards are matched
+    private val toastContextCallback: (String) -> Unit, // Callback to show Toast messages
+    private val numberOfCards: Int, // Number of cards in the game
+    private val currentPlayerProvider: () -> Int, // Provides the current player
+    private val switchPlayerCallback: () -> Unit, // Callback to switch the player
+    ) : IGameLogic {
 
     private lateinit var cards: List<MemoryCard>
     private var indexOfSingleSelectedCard: Int? = null
@@ -30,8 +27,6 @@ class MultiplayerGameLogic(
 
     init {
         try {
-
-
             setupGame()
         }catch(e:Exception){
             Log.e("MultiplayerGameLogic", "Error during game setup", e)
@@ -39,6 +34,7 @@ class MultiplayerGameLogic(
         }
     }
 
+    // Setup the game with cards
     private fun setupGame() {
         val images: MutableList<Int> = mutableListOf()
         images.addAll(listOf(
@@ -53,9 +49,11 @@ class MultiplayerGameLogic(
             R.drawable.nine,
             R.drawable.ten,
             R.drawable.eleven))
-        images.addAll(images)
+
+        images.addAll(images) // Duplicate the images
         images.shuffle()
 
+        // Create MemoryCard objects for each image
         val tempCards = mutableListOf<MemoryCard>()
         for (index in 0 until numberOfCards) {
             tempCards.add(MemoryCard(images[index]))
@@ -64,17 +62,18 @@ class MultiplayerGameLogic(
         updateViews()
     }
 
+    // Handle card click events
     override fun onCardClicked(position: Int) {
         try {
             val card = cards[position]
             if (card.isMatched || card.isFaceUp) return
 
-            if (indexOfSingleSelectedCard == null) {
+            indexOfSingleSelectedCard = if (indexOfSingleSelectedCard == null) {
                 restoreCards()
-                indexOfSingleSelectedCard = position
+                position
             } else {
                 checkForMatch(indexOfSingleSelectedCard!!, position)
-                indexOfSingleSelectedCard = null
+                null
             }
             card.isFaceUp = !card.isFaceUp
             updateViews()
@@ -86,6 +85,7 @@ class MultiplayerGameLogic(
         }
     }
 
+    // Save the current game state
     override fun saveState(savedState: Bundle) {
         try {
         savedState.putIntArray("cardIdentifiers", cards.map { it.identifier }.toIntArray())
@@ -95,12 +95,13 @@ class MultiplayerGameLogic(
         savedState.putInt("player1Score", player1Score)
         savedState.putInt("player2Score", player2Score)
         savedState.putInt("currentPlayer", currentPlayerProvider.invoke())
-        }catch(e:Exception){
+        } catch(e:Exception){
             Log.e("MultiplayerGameLogic", "Error saving game state", e)
             FirebaseCrashlytics.getInstance().recordException(e)
         }
     }
 
+    // Restore the game state from a saved state
     override fun restoreState(savedInstanceState: Bundle) {
         try{
         val identifiers = savedInstanceState.getIntArray("cardIdentifiers")
@@ -117,28 +118,29 @@ class MultiplayerGameLogic(
         player2Score = savedInstanceState.getInt("player2Score")
         currentPlayerProvider.invoke()
         updateViews()
-        }catch(e:Exception){
+        } catch(e:Exception){
             Log.e("MultiplayerGameLogic", "Error restoring game state", e)
             FirebaseCrashlytics.getInstance().recordException(e)
         }
     }
 
-
+    // Restore the cards' state
     private fun restoreCards() {
-        try{
+        try {
         cards.forEach { if (!it.isMatched) it.isFaceUp = false }
-        }catch(e:Exception){
+        } catch(e:Exception){
             Log.e("MultiplayerGameLogic", "Error restoring cards", e)
             FirebaseCrashlytics.getInstance().recordException(e)
         }
     }
 
+    // Check if two cards match
     private fun checkForMatch(position1: Int, position2: Int) {
-        try{
+        try {
         if (cards[position1].identifier == cards[position2].identifier) {
             cards[position1].isMatched = true
             cards[position2].isMatched = true
-            ToastContextCallback("Match found!")
+            toastContextCallback("Good job!")
             if (currentPlayerProvider.invoke() == 1) {
                 player1Score++
             } else {
@@ -152,69 +154,69 @@ class MultiplayerGameLogic(
                 switchPlayerCallback()
             }, 350)
         }
-        }catch(e:Exception){
+        } catch(e:Exception){
             Log.e("MultiplayerGameLogic", "Error checking for match", e)
             FirebaseCrashlytics.getInstance().recordException(e)
         }
     }
 
+    // Update the views with the current state of the cards
     private fun updateViews() {
         try {
             updateViewsCallback(cards)
-
-        }catch (e:Exception){
+        } catch (e:Exception){
             Log.e("MultiplayerGameLogic", "Error updating views", e)
             FirebaseCrashlytics.getInstance().recordException(e)
         }
     }
 
+    // Check if all cards are matched
     private fun checkAllMatched() {
-        try{
+        try {
         if (cards.all { it.isMatched }) {
             onAllCardsMatchedCallback()
         }
-        }catch (e:Exception){
+        } catch (e:Exception){
             Log.e("MultiplayerGameLogic", "Error checking if all cards are matched", e)
             FirebaseCrashlytics.getInstance().recordException(e)
         }
     }
 
+    // Get the current list of cards
     override fun getCards(): List<MemoryCard> {
 
-     return try{
+     return try {
          cards
-        }catch(e:Exception){
+        } catch(e:Exception){
          Log.e("MultiplayerGameLogic", "Error getting cards", e)
          FirebaseCrashlytics.getInstance().recordException(e)
          emptyList()
      }
     }
 
+    // Determine the winner
     override fun determineWinner(): Int {
         return try {
-
-
             return if (player1Score > player2Score) 1 else 2
-        }catch(e:Exception) {
+        } catch(e:Exception) {
             Log.e("MultiplayerGameLogic", "Error determining winner", e)
             FirebaseCrashlytics.getInstance().recordException(e)
             -1
         }
     }
 
+    // Get the score for a player
     override fun getScore(player: String): Int {
         return try{
-        if(player=="1")
-        {
-            score= player1Score
-        }
-        else
-            score =player2Score
-        return score
-    }catch(e:Exception){
+            score = if(player=="1") {
+                player1Score
+            } else
+                player2Score
+            return score
+        } catch(e:Exception){
             Log.e("MultiplayerGameLogic", "Error getting score for player $player", e)
             FirebaseCrashlytics.getInstance().recordException(e)
             0
-    }
+        }
     }
 }

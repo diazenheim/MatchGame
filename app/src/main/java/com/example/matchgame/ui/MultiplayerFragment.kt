@@ -20,10 +20,10 @@ class MultiplayerFragment : BaseRoundFragment() {
     private lateinit var playerPointTextView: TextView
     private var currentPlayer = 1
     private var flipsThisTurn = 0
-    private var point = 0
 
+    // Create the game logic for multiplayer mode
     override fun createGameLogic(): IGameLogic {
-        return try {
+        try {
             return MultiplayerGameLogic(
                 ::updateViews,
                 ::onAllCardsMatched,
@@ -39,28 +39,33 @@ class MultiplayerFragment : BaseRoundFragment() {
         }
     }
 
+    // Return the layout resource ID for the multiplayer fragment
     override fun getLayoutId(): Int {
         return R.layout.multiplayer_layout_container
     }
 
+    // Return the current level (not used in multiplayer, so return 0)
     override fun getLevel(): Int {
         return 0
     }
 
+    // Return the ID of the next fragment to navigate to when all cards are matched
     override fun getNextRoundFragment(): Int {
 
         return R.id.youWinFragment
-        //add winfragment and xml for multiplayer
     }
 
+    // Return the number of cards for the multiplayer game
     override fun getNumberOfCards(): Int {
-        return 22 // Specifica il numero di carte per il round 2
+        return 22
     }
 
+    // Return the timer duration (not used in multiplayer, so return 0)
     override fun getTimerDuration(): Long {
-        return 0 // Return 0 as a default value
+        return 0
     }
 
+    // Initialize the view components and set up the game logic
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         try {
             super.onViewCreated(view, savedInstanceState)
@@ -77,7 +82,7 @@ class MultiplayerFragment : BaseRoundFragment() {
         }
     }
 
-
+    // Handle card click events
     override fun onCardClicked(position: Int) {
         try {
             updatePlayerTurn()
@@ -97,6 +102,7 @@ class MultiplayerFragment : BaseRoundFragment() {
         }
     }
 
+    // Handle the event when all cards are matched
     override fun onAllCardsMatched() {
         try {
             val winner = gameLogic.determineWinner()
@@ -111,6 +117,7 @@ class MultiplayerFragment : BaseRoundFragment() {
         }
     }
 
+    // Update the UI to reflect the current player's turn
     private fun updatePlayerTurn() {
         try {
             playerTurnTextView.text = "Player $currentPlayer"
@@ -136,6 +143,7 @@ class MultiplayerFragment : BaseRoundFragment() {
         }
     }
 
+    // Switch to the next player
     private fun switchPlayer() {
         try {
             currentPlayer = if (currentPlayer == 1) 2 else 1
@@ -150,6 +158,7 @@ class MultiplayerFragment : BaseRoundFragment() {
         }
     }
 
+    // Get the current player
     fun getCurrentPlayer(): Int {
         return try {
             return currentPlayer

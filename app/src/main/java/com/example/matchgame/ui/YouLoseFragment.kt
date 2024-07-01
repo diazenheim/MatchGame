@@ -8,15 +8,12 @@ import android.view.ViewGroup
 import android.widget.ImageButton
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-import com.example.matchgame.MainActivity
 import com.example.matchgame.R
 import com.example.matchgame.telemetry.DataCollector
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 
-//Quando l'utente vince il gioco, si visualizza questo fragment
+// YouLoseFragment displays the screen when the player loses the game
 class YouLoseFragment : Fragment() {
-
-    private lateinit var dataCollector: DataCollector
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

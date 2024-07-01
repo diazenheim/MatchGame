@@ -11,6 +11,7 @@ import com.example.matchgame.R
 import com.example.matchgame.databinding.AboutLayoutBinding
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 
+// AboutFragment displays information about the application
 class AboutFragment : Fragment() {
 
     private var _binding: AboutLayoutBinding? = null

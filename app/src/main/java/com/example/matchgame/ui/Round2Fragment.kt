@@ -10,9 +10,7 @@ import com.google.firebase.crashlytics.FirebaseCrashlytics
 class Round2Fragment : BaseRoundFragment() {
     override fun createGameLogic(): IGameLogic {
         return try {
-
-
-            return SingleGameLogic(
+            SingleGameLogic(
                 ::updateViews,
                 ::onAllCardsMatched,
                 this::showToast,
@@ -63,7 +61,6 @@ class Round2Fragment : BaseRoundFragment() {
             super.onAllCardsMatched()
             // Usa il NavController per navigare al round successivo
             findNavController().navigate(R.id.action_round2Fragment_to_round3Fragment)
-            Log.d("Round2Fragment", "Dove sono")
         } catch (e: Exception) {
             Log.e("Round2Fragment", "Error on all card matched", e)
             FirebaseCrashlytics.getInstance().recordException(e)

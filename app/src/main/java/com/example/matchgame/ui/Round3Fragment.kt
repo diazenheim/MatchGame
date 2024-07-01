@@ -3,7 +3,6 @@ package com.example.matchgame.ui
 import android.util.Log
 import androidx.navigation.fragment.findNavController
 import com.example.matchgame.R
-
 import com.example.matchgame.logic.IGameLogic
 import com.example.matchgame.logic.SingleGameLogic
 import com.google.firebase.crashlytics.FirebaseCrashlytics
@@ -13,7 +12,12 @@ class Round3Fragment : BaseRoundFragment() {
     private val availableRevealsForCard = mutableMapOf<Int, Int>()
     override fun createGameLogic(): IGameLogic {
         return try{
-        return SingleGameLogic(::updateViews, ::onAllCardsMatched, this::showToast, 3, getNumberOfCards())
+            SingleGameLogic(
+                ::updateViews,
+                ::onAllCardsMatched,
+                this::showToast,
+                3,
+                getNumberOfCards())
     }catch (e: Exception) {
             Log.e("Round3Fragment", "Error creating game logic", e)
             FirebaseCrashlytics.getInstance().recordException(e)
