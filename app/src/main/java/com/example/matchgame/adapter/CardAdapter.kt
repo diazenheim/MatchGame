@@ -48,8 +48,6 @@ class CardAdapter(
 
     fun updateCards(newCards: List<MemoryCard>) {
         try {
-
-
             cards = newCards
             notifyDataSetChanged() //notifico RecyclerView del cambio di carte
         }catch(e:Exception){
@@ -73,10 +71,10 @@ class CardAdapter(
             }
             if (card.isBlocked) {
                 imageButton.colorFilter = desaturate()
-                lockIcon.visibility = View.VISIBLE // Mostra il lucchetto
+                lockIcon.visibility = View.VISIBLE // Show lock icon
             } else {
-                imageButton.colorFilter = null // Rimuove il filtro se la carta non è bloccata
-                lockIcon.visibility = View.GONE // Nasconde il lucchetto
+                imageButton.colorFilter = null // Remove filter if card is not blocked
+                lockIcon.visibility = View.GONE // Hide lock icon
             }
             if (card.isMatched) {
                 frameLayout.alpha = 0.1f // Set higher transparency for matched cards
@@ -91,8 +89,13 @@ class CardAdapter(
                 )
             }
 
-            imageButton.setOnClickListener { cardClickListener(adapterPosition) } // Sets the click listener, which will call the callback with the card's position
-        }catch(e:Exception){
+                val position = adapterPosition
+                if (position != RecyclerView.NO_POSITION) {
+                    imageButton.setOnClickListener { cardClickListener(position) }
+                } else {
+                    Log.e("CardViewHolder", "Invalid adapter position: $position")
+                }
+            } catch (e: Exception) {
                 Log.e("CardViewHolder", "Error binding card", e)
                 FirebaseCrashlytics.getInstance().recordException(e)
             }

@@ -25,8 +25,6 @@ class SingleGameLogic(
 
     init {
         try {
-
-
             setupGame()
         } catch (e: Exception) {
             Log.e("SingleGameLogic", "Error during game setup", e)
@@ -82,9 +80,14 @@ class SingleGameLogic(
     }
 
     override fun onCardClicked(position: Int) {
-        try {
+        // Ensure the position is within the valid range before proceeding
+        if (position < 0 || position >= cards.size) {
+            Log.e("SingleGameLogic", "Invalid card position: $position")
+            return
+        }
 
-            //WITHOUT THE POSSIBILITY TO FLIP THE CARDS BACK DOWN, TO BE DISCUSSED.
+        //WITHOUT THE POSSIBILITY TO FLIP THE CARDS BACK DOWN, TO BE DISCUSSED.
+        try {
             val card = cards[position]
             if (card.isMatched || card.isFaceUp || card.isBlocked) return
             if (card.isBlocked) {
@@ -100,7 +103,7 @@ class SingleGameLogic(
             }
 
             if (round == 3) {
-                // Se la carta è scoperta e viene cliccata, significa che verrà coperta
+                // If the card is face up and clicked, it will be flipped back down
                 if (card.isFaceUp) {
                     card.AvailableReveals--
                     if (card.AvailableReveals == 0) {
@@ -144,9 +147,46 @@ class SingleGameLogic(
         } catch (e: Exception) {
             Log.e("SingleGameLogic", "Error during card click handling", e)
             FirebaseCrashlytics.getInstance().recordException(e)
-
         }
     }
+
+  /*  override fun onCardClicked(position: Int) {
+        try {
+            if (position !in 0 until cards.size) return
+
+            val card = cards[position]
+            if (card.isMatched || card.isFaceUp || card.isBlocked) return
+            if (card.isBlocked) {
+                ToastContextCallback("The card is temporarily blocked")
+                return
+            }
+            if (indexOfSingleSelectedCard == null) {
+                restoreCards()
+                indexOfSingleSelectedCard = position
+            } else if (indexOfSingleSelectedCard in 0 until cards.size) {
+                checkForMatch(indexOfSingleSelectedCard!!, position)
+                indexOfSingleSelectedCard = null
+            }
+
+            if (round == 3) {
+                // If the card is face-up and clicked, it will be turned face-down
+                if (card.isFaceUp) {
+                    card.AvailableReveals--
+                    if (card.AvailableReveals == 0) {
+                        blockCard(position)
+                    }
+                }
+            }
+
+            card.isFaceUp = !card.isFaceUp
+            updateViews()
+            checkAllMatched()
+        } catch (e: Exception) {
+            Log.e("SingleGameLogic", "Error during card click handling", e)
+            FirebaseCrashlytics.getInstance().recordException(e)
+        }
+    }*/
+
 
 
     override fun saveState(savedState: Bundle) {
@@ -220,6 +260,10 @@ class SingleGameLogic(
     }
 
     private fun checkForMatch(position1: Int, position2: Int) {
+        if (position1 < 0 || position1 >= cards.size || position2 < 0 || position2 >= cards.size) {
+            Log.e("SingleGameLogic", "Invalid card positions: $position1, $position2")
+            return
+        }
         try {
             if (cards[position1].identifier == cards[position2].identifier) {
                 cards[position1].isMatched = true
@@ -240,7 +284,7 @@ class SingleGameLogic(
                         }
                     }
                     updateViews()
-                }, 350)
+                }, 300)
             }
         } catch (e: Exception) {
             Log.e("SingleGameLogic", "Error checking for match", e)
@@ -250,8 +294,6 @@ class SingleGameLogic(
 
     private fun updateViews() {
         try {
-
-
             updateViewsCallback(cards)
         } catch (e: Exception) {
             Log.e("SingleGameLogic", "Error updating View", e)
@@ -293,7 +335,7 @@ class SingleGameLogic(
 
     override fun getScore(player: String): Int {
         return try {
-            return 0 // Single player game does not determine a winner
+            0 // Single player game does not determine a winner
         } catch (e: Exception) {
             Log.e("SingleGameLogic", "Error getting score", e)
             FirebaseCrashlytics.getInstance().recordException(e)
@@ -302,6 +344,11 @@ class SingleGameLogic(
     }
 
     private fun blockCard(position: Int) {
+        if (position < 0 || position >= cards.size) {
+            Log.e("SingleGameLogic", "Invalid card position for blocking: $position")
+            return
+        }
+
         try {
             if (cards[position].isBlocked) return
             cards[position].isBlocked = true

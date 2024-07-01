@@ -120,14 +120,15 @@ abstract class BaseRoundFragment : Fragment() {
             FirebaseCrashlytics.getInstance().recordException(e)}
     }
 
-    protected fun setupRecyclerView() {
+    private fun setupRecyclerView() {
         try {
             val orientation = resources.configuration.orientation
-            val spanCount = if (orientation == Configuration.ORIENTATION_PORTRAIT) 2 else 4 // Adjust based on your design
+            val spanCount = if (orientation == Configuration.ORIENTATION_PORTRAIT) 2 else 4
             recyclerView.layoutManager = GridLayoutManager(context, spanCount, GridLayoutManager.VERTICAL, false)
         } catch (e: Exception) {
             Log.e("BaseRoundFragment","Error onCreateView",e)
-            FirebaseCrashlytics.getInstance().recordException(e) }
+            FirebaseCrashlytics.getInstance().recordException(e)
+        }
     }
 
 
@@ -188,9 +189,9 @@ abstract class BaseRoundFragment : Fragment() {
     }
     fun pauseTimer() {
         try{
-        timer?.cancel()
-        isPaused = true
-    }catch (e: Exception) {
+            timer.cancel()
+            isPaused = true
+    } catch (e: Exception) {
             Log.e("BaseRoundFragment", "Error stopping timer", e)
             FirebaseCrashlytics.getInstance().recordException(e)
         }
@@ -221,7 +222,7 @@ abstract class BaseRoundFragment : Fragment() {
     override fun onSaveInstanceState(savedState: Bundle) {
         super.onSaveInstanceState(savedState)
         try {
-            if (isGameLogicInitialized) { //Salviamo l'oggetto GameLogic solo se è stato inizializzato, altrimenti avremmo un'eccezione
+            if (isGameLogicInitialized) { // Save GameLogic object only if initialized, otherwise we'd get an exception
                 gameLogic.saveState(savedState)
             }
             // Save the remaining time
